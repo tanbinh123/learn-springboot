@@ -1,5 +1,6 @@
 package com.sn.springboot;
 
+import com.sn.springboot.aop.CoffeeShop;
 import com.sn.springboot.properties.DataBaseProperties3;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,13 @@ class LearnSpringbootApplicationTests {
     @Autowired
     DataBaseProperties3 dataBaseProperties;
 
+    @Autowired
+    CoffeeShop coffeeShop;
+
     @Test
     void contextLoads() {
         System.out.println(dataBaseProperties.getDriverName());
+        coffeeShop.sale("拿铁");
     }
 
 }
