@@ -4,23 +4,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties("database")
+@ConfigurationProperties("spring.datasource")
 public class DataBaseProperties2 {
-    private String driverName;
-
     private String url;
 
     private String username;
 
     private String password;
-
-    public String getDriverName() {
-        return driverName;
-    }
-
-    public void setDriverName(String driverName) {
-        this.driverName = driverName;
-    }
 
     public String getUrl() {
         return url;

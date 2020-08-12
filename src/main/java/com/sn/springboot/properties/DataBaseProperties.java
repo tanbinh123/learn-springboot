@@ -5,10 +5,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DataBaseProperties {
-    @Value("${database.driverName}")
+    @Value("${spring.datasource.driver-class-name}")
     private String driverName;
 
-    @Value("${database.url}")
+    @Value("${spring.datasource.url}")
     private String url;
 
     private String username;
@@ -31,7 +31,7 @@ public class DataBaseProperties {
         this.url = url;
     }
 
-    @Value("${database.username}")
+    @Value("${spring.datasource.username}")
     public String getUsername() {
         return username;
     }
@@ -40,7 +40,7 @@ public class DataBaseProperties {
         this.username = username;
     }
 
-    @Value("${database.password}")
+    @Value("${spring.datasource.password}")
     public String getPassword() {
         return password;
     }

@@ -9,9 +9,8 @@ public class DataBaseConditional implements Condition {
     @Override
     public boolean matches(ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
         Environment env = conditionContext.getEnvironment();
-        return env.containsProperty("database.driverName")
-                && env.containsProperty("database.url")
-                && env.containsProperty("database.username")
-                && env.containsProperty("database.password");
+        return env.containsProperty("spring.datasource.url")
+                && env.containsProperty("spring.datasource.username")
+                && env.containsProperty("spring.datasource.password");
     }
 }

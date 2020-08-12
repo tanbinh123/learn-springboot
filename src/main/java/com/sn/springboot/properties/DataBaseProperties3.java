@@ -16,10 +16,10 @@ public class DataBaseProperties3 {
 
     private String password;
 
-    public DataBaseProperties3(@Value("${database.driverName}") String driverName,
-                               @Value("${database.url}") String url,
-                               @Value("${database.username}") String username,
-                               @Value("${database.password}") String password) {
+    public DataBaseProperties3(@Value("${spring.datasource.driver-class-name}") String driverName,
+                               @Value("${spring.datasource.url}") String url,
+                               @Value("${spring.datasource.username}") String username,
+                               @Value("${spring.datasource.password}") String password) {
         this.driverName = driverName;
         this.url = url;
         this.username = username;

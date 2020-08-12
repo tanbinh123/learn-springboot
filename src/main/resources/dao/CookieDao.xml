@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sn.springboot.dao.CookieDao">
+    <resultMap id="cookieMap" type="cookie">
+        <result property="addTime" column="add_time"/>
+        <result property="staleTime" column="stale_time"/>
+        <result property="loginName" column="login_name"/>
+        <result property="mediaId" column="media_id"/>
+    </resultMap>
+
+    <select id="getCookieById" parameterType="integer" resultMap="cookieMap">
+        select id, cookie, add_time, stale_time, status, login_name, media_id
+        from smm_fetch_cookie
+        where id = #{id}
+    </select>
+    <!--    <select id="getCookieById" parameterType="integer" resultType="cookie">-->
+    <!--        select id, cookie, add_time as addTime, stale_time as staleTime, status, login_name as loginTime, media_id as mediaId from smm_fetch_cookie where id = #{id}-->
+    <!--    </select>-->
+</mapper>
