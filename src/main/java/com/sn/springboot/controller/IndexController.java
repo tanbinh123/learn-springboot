@@ -6,6 +6,8 @@ import com.sn.springboot.pojo.Cookie;
 import com.sn.springboot.pojo.User;
 import com.sn.springboot.service.CookieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +59,7 @@ public class IndexController {
 
     /**
      * user、book中有同名字段，前台提交数据时，参数名需要添加user.、book.前缀
+     *
      * @param user
      * @param book
      */
@@ -64,5 +67,44 @@ public class IndexController {
     public void addInfo(@ModelAttribute("user") User user, @ModelAttribute("book") Book book) {
         System.out.println(user);
         System.out.println(book);
+    }
+
+    @PostMapping("/test/{id}")
+    public void test(@PathVariable("id") String id) {
+        System.out.println(id);
+    }
+
+    /**
+     * 通过body提交json格式的数据，headers需设置content-type:application/json
+     *
+     * @param book
+     */
+    @PostMapping("/test2")
+    public void test2(@RequestBody Book book) {
+        System.out.println(book);
+    }
+
+    /**
+     * consumes 限定接收的媒体类型
+     * produces 限定返回的媒体类型
+     *
+     * @return
+     */
+    @GetMapping(value = "/plain_value",
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String getPlanValue() {
+        return "xyz";
+    }
+
+    @ResponseStatus(value = HttpStatus.CREATED)
+    @ResponseBody
+    @GetMapping("/book/{name}")
+    public Book book(@PathVariable("name") String name) {
+        Book book = new Book();
+        book.setName(name);
+        book.setPrice(30);
+        return book;
     }
 }
