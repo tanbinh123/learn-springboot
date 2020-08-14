@@ -7,12 +7,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
+@EnableScheduling
 @PropertySource(value = {"classpath:jdbc.properties"}, ignoreResourceNotFound = true)
 @MapperScan(basePackages = "com.sn.springboot.dao", annotationClass = Repository.class)
 public class LearnSpringbootApplication implements WebMvcConfigurer {
