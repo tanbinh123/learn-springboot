@@ -2,7 +2,6 @@ package com.sn.springboot.timedtask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -19,7 +18,9 @@ public class ScheduledThreadPoolService {
      */
     public void task0() {
         service.schedule(() -> {
-            logger.info(Thread.currentThread().getName() + "【task0】");
+            logger.info("task0-start");
+            sleep(2);
+            logger.info("task0-end");
         }, 2, TimeUnit.SECONDS);
     }
 
@@ -29,8 +30,9 @@ public class ScheduledThreadPoolService {
      */
     public void task1() {
         service.scheduleAtFixedRate(() -> {
+            logger.info("task1-start");
             sleep(2);
-            logger.info(Thread.currentThread().getName() + "【task1】");
+            logger.info("task1-end");
         }, 2, 4, TimeUnit.SECONDS);
     }
 
@@ -40,8 +42,9 @@ public class ScheduledThreadPoolService {
      */
     public void task2() {
         service.scheduleWithFixedDelay(() -> {
+            logger.info("task2-start");
             sleep(2);
-            logger.info(Thread.currentThread().getName() + "【task2】");
+            logger.info("task2-end");
         }, 2, 4, TimeUnit.SECONDS);
     }
 
@@ -56,7 +59,7 @@ public class ScheduledThreadPoolService {
     public static void main(String[] args) {
         ScheduledThreadPoolService scheduledThreadPoolService = new ScheduledThreadPoolService();
 //        scheduledThreadPoolService.task0();
-//        scheduledThreadPoolService.task1();
-        scheduledThreadPoolService.task2();
+        scheduledThreadPoolService.task1();
+//        scheduledThreadPoolService.task2();
     }
 }

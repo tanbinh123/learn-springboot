@@ -2,7 +2,6 @@ package com.sn.springboot.timedtask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
@@ -13,12 +12,13 @@ public class ScheduleService {
 
     /**
      * fixedRate：每间隔2秒执行一次任务
-     * 注意，如果任务的执行时间（例如6秒）大于间隔时间，则会等待任务执行结束后直接开始下次任务
+     * 注意，默认情况下定时任务是在同一线程同步执行的，如果任务的执行时间（例如6秒）大于间隔时间，则会等待任务执行结束后直接开始下次任务
      */
 //    @Scheduled(fixedRate = 2000)
     public void task0() {
+        logger.info("task0-start");
         sleep(6);
-        logger.info(Thread.currentThread().getName() + "【task0】");
+        logger.info("task0-end");
     }
 
     /**
@@ -27,8 +27,9 @@ public class ScheduleService {
      */
 //    @Scheduled(fixedDelay = 2000)
     public void task1() {
+        logger.info("task1-start");
         sleep(6);
-        logger.info(Thread.currentThread().getName() + "【task1】");
+        logger.info("task1-end");
     }
 
     /**
@@ -36,7 +37,9 @@ public class ScheduleService {
      */
 //    @Scheduled(initialDelay = 2000, fixedDelay = 3000)
     public void task2() {
-        logger.info(Thread.currentThread().getName() + "【task2】");
+        logger.info("task2-start");
+        sleep(6);
+        logger.info("task2-end");
     }
 
     /**
@@ -52,7 +55,9 @@ public class ScheduleService {
      */
 //    @Scheduled(cron = "0 59 23 * * ?")
     public void task3() {
-        logger.info(Thread.currentThread().getName() + "【task3】");
+        logger.info("task3-start");
+        sleep(6);
+        logger.info("task3-end");
     }
 
     private void sleep(long time) {
