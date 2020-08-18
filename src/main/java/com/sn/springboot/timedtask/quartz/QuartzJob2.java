@@ -13,7 +13,7 @@ public class QuartzJob2 extends QuartzJobBean {
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         JobDataMap jobDataMap = jobExecutionContext.getMergedJobDataMap();
-        logger.info(jobDataMap.getString("date"));
-        logger.info("hello world");
+        String date = jobDataMap.getString("date");
+        logger.info("hello world " + date);
     }
 }
