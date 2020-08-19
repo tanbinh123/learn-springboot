@@ -6,7 +6,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ActiveMqSendService {
+public class ActiveMQSendService {
     @Autowired
     private JmsTemplate jmsTemplate;
 
