@@ -1,9 +1,7 @@
 package com.sn.springboot.controller;
 
-import com.sn.springboot.pojo.Book;
-import com.sn.springboot.pojo.Car;
-import com.sn.springboot.pojo.Cookie;
-import com.sn.springboot.pojo.User;
+import com.sn.springboot.activemq.ActiveMqSendService;
+import com.sn.springboot.pojo.*;
 import com.sn.springboot.service.CookieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +18,9 @@ public class IndexController {
 
     @Autowired
     private CookieService cookieService;
+
+    @Autowired
+    private ActiveMqSendService activeMqSendService;
 
     @RequestMapping("/index")
     public String index() {
@@ -106,5 +107,19 @@ public class IndexController {
         book.setName(name);
         book.setPrice(30);
         return book;
+    }
+
+    @ResponseBody
+    @GetMapping("/message")
+    public String message(String title) {
+        activeMqSendService.sendMessage(title);
+        return "message:" + title;
+    }
+
+    @ResponseBody
+    @GetMapping("/message2")
+    public String message2(Message message) {
+        activeMqSendService.sendMessage(message);
+        return "message:" + message;
     }
 }
