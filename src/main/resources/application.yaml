@@ -1,0 +1,15 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /sn
+music:
+  author: zhoujielun
+  names:
+    - qilixiang
+    - juhuatai
+    - longquanfeng
+  zhuanji:
+    - name: yehuimei
+      year: 2012
+    - name: badukongjian
+      year: 2014
