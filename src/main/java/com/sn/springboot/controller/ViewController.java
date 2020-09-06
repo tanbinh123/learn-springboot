@@ -10,8 +10,8 @@ import java.util.List;
 
 @Controller
 public class ViewController {
-    @GetMapping("/ftlh_book")
-    public String ftlhBookView(Model model) {
+    @GetMapping("/freemarker_book")
+    public String freemarkerBookView(Model model) {
         List<Book> books = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             Book book = new Book();
@@ -20,6 +20,19 @@ public class ViewController {
             books.add(book);
         }
         model.addAttribute("books", books);
-        return "book";
+        return "freemarker_book";
+    }
+
+    @GetMapping("/thymeleaf_book")
+    public String thymeleafBookView(Model model) {
+        List<Book> books = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            Book book = new Book();
+            book.setName("Springboot---" + i);
+            book.setPrice(100 + i);
+            books.add(book);
+        }
+        model.addAttribute("books", books);
+        return "thymeleaf_book";
     }
 }
