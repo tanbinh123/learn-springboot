@@ -27,7 +27,12 @@ public class GlobalControllerAdvice {
      */
     @ModelAttribute
     public void prepareData(Model model) {
-        model.addAttribute("key", "helloworld666");
+        model.addAttribute("key", "hello world 666");
+    }
+
+    @ModelAttribute("key2")
+    public String prepareData2() {
+        return "hello world 888";
     }
 
     /**
