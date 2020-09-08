@@ -3,11 +3,13 @@ package com.sn.springboot.controller;
 import com.sn.springboot.pojo.Book;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 import java.util.List;
 
+//@CrossOrigin
 @Controller
 public class ViewController {
     @GetMapping("/freemarker_book")
