@@ -27,7 +27,7 @@ public class UploadController {
         String newName = UUID.randomUUID().toString().replaceAll("-", "") + name.substring(name.lastIndexOf("."));
         try {
             file.transferTo(new File(dest, newName));
-            String url = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + "/img/" + format + "/" + newName;
+            String url = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + req.getContextPath() + "/img/" + format + "/" + newName;
             return url;
         } catch (IOException e) {
             e.printStackTrace();
