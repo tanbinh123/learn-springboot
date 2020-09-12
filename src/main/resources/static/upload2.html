@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ajax文件上传</title>
+    <script src="js/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+<a id="result" href=""></a><br>
+<input type="file" id="file">
+<input type="submit" value="提交" onclick="uploadFile()">
+<script>
+    function uploadFile() {
+        var file = $("#file")[0].files[0];
+        var formData = new FormData();
+        formData.append("file", file);
+        $.ajax({
+            type: "post",
+            url: "/sn/upload",
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (res) {
+                $("#result").attr("href", res);
+                $("#result").text(res);
+            }
+        })
+    }
+</script>
+</body>
+</html>
