@@ -57,4 +57,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public MyInterceptor myInterceptor() {
         return new MyInterceptor();
     }
+
+    /**
+     * 路径映射
+     *
+     * @param registry
+     */
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("hello").setViewName("hello");
+    }
 }
