@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 /**
  * 系统启动只执行一次的任务类
+ * Program arguments
  * 打包启动时传参：java -jar xxxxx.jar 参数1 参数2
  */
 @Component
