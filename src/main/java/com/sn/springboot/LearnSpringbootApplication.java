@@ -37,14 +37,6 @@ public class LearnSpringbootApplication implements WebMvcConfigurer {
 //        return mapperScannerConfigurer;
 //    }
 
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        InterceptorRegistration ir = registry.addInterceptor(new MyInterceptor());
-        // 指定拦截匹配模式，限制拦截器拦截请求
-        ir.addPathPatterns("/main/*");
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(LearnSpringbootApplication.class, args);
     }
