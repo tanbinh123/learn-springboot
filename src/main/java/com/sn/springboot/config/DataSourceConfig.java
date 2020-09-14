@@ -1,4 +1,4 @@
-package com.sn.springboot.config.jdbctemplate;
+package com.sn.springboot.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
