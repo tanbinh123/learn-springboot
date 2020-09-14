@@ -7,17 +7,17 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
 
-@Configuration
+//@Configuration
 public class DataSourceConfig {
-    @Bean
-    @ConfigurationProperties(prefix = "spring.datasource.one")
-    public DataSource dsOne() {
-        return DataSourceBuilder.create().build();
-    }
-
-    @Bean
-    @ConfigurationProperties(prefix = "spring.datasource.two")
-    public DataSource dsTwo() {
-        return DataSourceBuilder.create().build();
-    }
+//    @Bean
+//    @ConfigurationProperties(prefix = "spring.datasource.one")
+//    public DataSource dsOne() {
+//        return DataSourceBuilder.create().build();
+//    }
+//
+//    @Bean
+//    @ConfigurationProperties(prefix = "spring.datasource.two")
+//    public DataSource dsTwo() {
+//        return DataSourceBuilder.create().build();
+//    }
 }

@@ -7,15 +7,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 
-@Configuration
+//@Configuration
 public class JdbcTemplateConfig {
-    @Bean
-    public JdbcTemplate jdbcTemplateOne(@Qualifier("dsOne") DataSource dsOne) {
-        return new JdbcTemplate(dsOne);
-    }
-
-    @Bean
-    public JdbcTemplate jdbcTemplateTwo(@Qualifier("dsTwo") DataSource dsTwo) {
-        return new JdbcTemplate(dsTwo);
-    }
+//    @Bean
+//    public JdbcTemplate jdbcTemplateOne(@Qualifier("dsOne") DataSource dsOne) {
+//        return new JdbcTemplate(dsOne);
+//    }
+//
+//    @Bean
+//    public JdbcTemplate jdbcTemplateTwo(@Qualifier("dsTwo") DataSource dsTwo) {
+//        return new JdbcTemplate(dsTwo);
+//    }
 }
