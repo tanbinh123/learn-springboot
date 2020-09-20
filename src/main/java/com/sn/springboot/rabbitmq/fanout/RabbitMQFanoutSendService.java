@@ -1,20 +1,12 @@
-package com.sn.springboot.rabbitmq;
+package com.sn.springboot.rabbitmq.fanout;
 
-import com.sn.springboot.pojo.Message;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RabbitMQSendService implements RabbitTemplate.ConfirmCallback {
-    @Value("${rabbitmq.queue.message}")
-    private String messageRoutingKey;
-
-    @Value("${rabbitmq.queue.object}")
-    private String objectRoutingKey;
-
+public class RabbitMQFanoutSendService implements RabbitTemplate.ConfirmCallback {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
@@ -22,14 +14,7 @@ public class RabbitMQSendService implements RabbitTemplate.ConfirmCallback {
         // 设置发送消息是否已被消费的回调
         rabbitTemplate.setConfirmCallback(this);
         System.out.println("发送的消息：" + message);
-        rabbitTemplate.convertAndSend(messageRoutingKey, message);
-    }
-
-    public void sendMessage(Message message) {
-        // 设置发送消息是否已被消费的回调
-        rabbitTemplate.setConfirmCallback(this);
-        System.out.println("发送的消息：" + message);
-        rabbitTemplate.convertAndSend(objectRoutingKey, message);
+        rabbitTemplate.convertAndSend(RabbitMQFanoutConfig.FANOUT_NAME, null, message);
     }
 
     @Override

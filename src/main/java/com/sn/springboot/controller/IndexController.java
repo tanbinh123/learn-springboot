@@ -2,7 +2,7 @@ package com.sn.springboot.controller;
 
 import com.sn.springboot.activemq.ActiveMQSendService;
 import com.sn.springboot.pojo.*;
-import com.sn.springboot.rabbitmq.RabbitMQSendService;
+import com.sn.springboot.rabbitmq.direct.RabbitMQDirectSendService;
 import com.sn.springboot.service.CookieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ public class IndexController {
     private ActiveMQSendService activeMqSendService;
 
     @Autowired
-    private RabbitMQSendService rabbitMQSendService;
+    private RabbitMQDirectSendService rabbitMQSendService;
 
     @RequestMapping("/index")
     public String index() {
@@ -119,13 +119,5 @@ public class IndexController {
 //        activeMqSendService.sendMessage(title);
         rabbitMQSendService.sendMessage(title);
         return "message:" + title;
-    }
-
-    @ResponseBody
-    @GetMapping("/message2")
-    public String message2(Message message) {
-//        activeMqSendService.sendMessage(message);
-        rabbitMQSendService.sendMessage(message);
-        return "message:" + message;
     }
 }
