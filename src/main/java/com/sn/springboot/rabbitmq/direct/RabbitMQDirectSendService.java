@@ -19,6 +19,7 @@ public class RabbitMQDirectSendService implements RabbitTemplate.ConfirmCallback
         // 设置发送消息是否已被消费的回调
         rabbitTemplate.setConfirmCallback(this);
         System.out.println("发送的消息：" + message);
+        // 消息会发送到和routingKey匹配的消息队列
         rabbitTemplate.convertAndSend(routingKey, message);
     }
 

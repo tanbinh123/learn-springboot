@@ -33,10 +33,12 @@ public class RabbitMQFanoutConfig {
         return new FanoutExchange(FANOUT_NAME, true, false);
     }
 
+    @Bean
     public Binding binding2() {
         return BindingBuilder.bind(queue2()).to(fanoutExchange());
     }
 
+    @Bean
     public Binding binding3() {
         return BindingBuilder.bind(queue3()).to(fanoutExchange());
     }
