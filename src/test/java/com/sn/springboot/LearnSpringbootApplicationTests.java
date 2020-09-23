@@ -2,6 +2,7 @@ package com.sn.springboot;
 
 import com.sn.springboot.aop.CoffeeShop;
 import com.sn.springboot.properties.DataBaseProperties3;
+import com.sn.springboot.redis.RedisService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,14 @@ class LearnSpringbootApplicationTests {
     @Autowired
     CoffeeShop coffeeShop;
 
+    @Autowired
+    RedisService redisService;
+
     @Test
     void doTest() {
 //        System.out.println(dataBaseProperties.getDriverName());
 //        coffeeShop.sale("拿铁");
+        redisService.testList();
     }
 
 }
