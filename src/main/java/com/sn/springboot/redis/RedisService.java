@@ -1,18 +1,16 @@
 package com.sn.springboot.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.BoundHashOperations;
-import org.springframework.data.redis.core.BoundListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.connection.RedisZSetCommands;
+import org.springframework.data.redis.connection.SortParameters;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
+import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
- * 功能：
+ * 功能：操作redis常用数据类型
  * 作者：SheHuan
  * 时间：2020/9/23 14:41
  */
@@ -52,7 +50,9 @@ public class RedisService {
     }
 
     public void testList() {
+        // 从左边插入，最终从左到右的顺序为v4、v3、v2、v1
         stringRedisTemplate.opsForList().leftPushAll("list1", "v1", "v2", "v3", "v4");
+        // 从右边插入
         stringRedisTemplate.opsForList().rightPushAll("list2", "v3", "v4", "v5", "v6");
         BoundListOperations<String, String> list1Ops = stringRedisTemplate.boundListOps("list1");
         System.out.println(list1Ops.rightPop());
@@ -66,10 +66,68 @@ public class RedisService {
     }
 
     public void testSet() {
+        stringRedisTemplate.opsForSet().add("set1", "v1", "v2", "v3", "v4");
+        stringRedisTemplate.opsForSet().add("set2", "v3", "v4", "v5", "v6");
 
+        BoundSetOperations<String, String> set1Ops = stringRedisTemplate.boundSetOps("set1");
+        // 添加
+        set1Ops.add("v5", "v6");
+        // 删除
+        set1Ops.remove("v1", "v6");
+        // 求交集
+        Set<String> inter = set1Ops.intersect("set2");
+        // 求交集，并用新集合inter1保存
+        set1Ops.intersectAndStore("set2", "inter1");
+        // 求交集，并用新集合inter2保存
+        set1Ops.intersectAndStore(new HashSet<String>() {
+            {
+                add("v0");
+                add("v1");
+                add("v2");
+            }
+        }, "inter2");
+        // 求差集
+        Set<String> diff = set1Ops.diff("set2");
+        // 求并集
+        Set<String> union = set1Ops.union("set2");
     }
 
     public void testZSet() {
+        Set<TypedTuple<String>> zSet = new HashSet<>();
+        for (int i = 0; i < 9; i++) {
+            // 分数
+            double score = i * 0.1;
+            TypedTuple<String> typedTuple = new DefaultTypedTuple<String>("value" + i, score);
+            zSet.add(typedTuple);
+        }
+        stringRedisTemplate.opsForZSet().add("zSet", zSet);
+        // 绑定zSet有序集合操作
+        BoundZSetOperations<String, String> zSetOps = stringRedisTemplate.boundZSetOps("zSet");
+        // 添加单个
+        zSetOps.add("value10", 0.66);
+        // 索引范围内，按分数排序（默认都是升序）
+        Set<String> scoreSet = zSetOps.range(1, 5);
+        // 分数范围内，按分数排序
+        Set<String> scoreRange = zSetOps.rangeByScore(0.3, 0.8);
+
+        // 定义range
+        RedisZSetCommands.Range range = new RedisZSetCommands.Range();
+        // 大于value5
+        range.gt("value5");
+        // 小于等于value8
+        range.lte("value8");
+        Set<String> lexRange = zSetOps.rangeByLex(range);
+
+        // 求分数
+        Double score = zSetOps.score("value2");
+
+        // 索引范围内，按分数排序
+        Set<TypedTuple<String>> rangeSetTuple = zSetOps.rangeWithScores(1, 5);
+        // 分数范围内，按分数排序
+        Set<TypedTuple<String>> scoreSetTuple = zSetOps.rangeByScoreWithScores(0.3, 0.8);
+
+        // 降序
+        Set<String> scoreSet2 = zSetOps.reverseRange(1, 5);
 
     }
 }
