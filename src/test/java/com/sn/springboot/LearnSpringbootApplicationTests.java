@@ -1,6 +1,7 @@
 package com.sn.springboot;
 
 import com.sn.springboot.aop.CoffeeShop;
+import com.sn.springboot.mail.MailService;
 import com.sn.springboot.properties.DataBaseProperties3;
 import com.sn.springboot.redis.RedisService;
 import org.junit.jupiter.api.Test;
@@ -22,11 +23,15 @@ class LearnSpringbootApplicationTests {
     @Autowired
     RedisService redisService;
 
+    @Autowired
+    MailService mailService;
+
     @Test
     void doTest() {
 //        System.out.println(dataBaseProperties.getDriverName());
 //        coffeeShop.sale("拿铁");
-        redisService.testList();
+//        redisService.testList();
+        mailService.send2();
     }
 
 }
