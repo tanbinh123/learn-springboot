@@ -1,11 +1,11 @@
 package com.sn.springboot.redis;
 
+import com.sn.springboot.pojo.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.RedisZSetCommands;
-import org.springframework.data.redis.connection.SortParameters;
 import org.springframework.data.redis.core.*;
-import org.springframework.stereotype.Service;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
@@ -23,13 +23,9 @@ public class RedisService {
     private StringRedisTemplate stringRedisTemplate;
 
     public void testString() {
-        redisTemplate.opsForValue().set("key1", "value1");
-        System.out.println((String) redisTemplate.opsForValue().get("key1"));
-
-        // 默认情况下，RedisTemplate使用的JDK序列化器，不能使用运算函数
-        stringRedisTemplate.opsForValue().set("key2", "1");
-        stringRedisTemplate.opsForValue().increment("key2", 1);
-        System.out.println(stringRedisTemplate.opsForValue().get("key2"));
+        stringRedisTemplate.opsForValue().set("key1", "1");
+        stringRedisTemplate.opsForValue().increment("key1", 1);
+        System.out.println(stringRedisTemplate.opsForValue().get("key1"));
     }
 
     public void testHash() {
@@ -129,5 +125,16 @@ public class RedisService {
         // 降序
         Set<String> scoreSet2 = zSetOps.reverseRange(1, 5);
 
+    }
+
+    public void testObject() {
+        // 默认情况下，RedisTemplate使用的JDK序列化器，不能使用运算函数
+        redisTemplate.opsForValue().set("key2", "value2");
+        System.out.println((String) redisTemplate.opsForValue().get("key2"));
+
+        Message message = new Message("2020-10-01", "放假通知");
+        redisTemplate.opsForValue().set("message", message);
+        Message msg = (Message) redisTemplate.opsForValue().get("message");
+        System.out.println(msg);
     }
 }
