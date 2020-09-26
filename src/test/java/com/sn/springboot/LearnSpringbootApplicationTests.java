@@ -34,8 +34,8 @@ class LearnSpringbootApplicationTests {
     void doTest() {
 //        System.out.println(dataBaseProperties.getDriverName());
 //        coffeeShop.sale("拿铁");
-        redisService2.testSend();
-//        mailService.send2();
+//        redisService2.testSend();
+        mailService.send();
     }
 
 }
