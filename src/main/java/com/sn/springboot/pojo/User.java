@@ -1,14 +1,32 @@
 package com.sn.springboot.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.apache.ibatis.type.Alias;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import java.io.Serializable;
+import java.util.Date;
 
-@Component
-@Scope("prototype")
-public class User {
+@Alias("user")
+public class User implements Serializable {
+    private static final long serialVersionUID = -8487606313547156526L;
+    private Long id;
+
     private String name;
-    private int age;
+
+    private Integer age;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date time;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -18,19 +36,19 @@ public class User {
         this.name = name;
     }
 
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                '}';
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
     }
 }

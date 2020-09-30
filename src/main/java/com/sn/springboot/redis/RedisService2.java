@@ -9,6 +9,8 @@ import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * 功能：
  * 作者：SheHuan
@@ -59,13 +61,26 @@ public class RedisService2 {
             public Object execute(RedisOperations operations) throws DataAccessException {
                 for (int i = 0; i < 100000; i++) {
                     // 所有的命令会先进入队列，之后再执行
-                    operations.opsForValue().set("pipline_" + i, "value_" + i);
+                    operations.opsForValue().set("pipline_" + i, "value_" + i, 5, TimeUnit.MINUTES);
                 }
                 return null;
             }
         });
         long end = System.currentTimeMillis();
         System.out.println("耗时：" + (end - start) + "毫秒");
+    }
+
+    public void deletePiplineKV() {
+        stringRedisTemplate.executePipelined(new SessionCallback<Object>() {
+            @Override
+            public Object execute(RedisOperations operations) throws DataAccessException {
+                for (int i = 0; i < 100000; i++) {
+                    // 所有的命令会先进入队列，之后再执行
+                    operations.delete("pipline_" + i);
+                }
+                return null;
+            }
+        });
     }
 
     /**

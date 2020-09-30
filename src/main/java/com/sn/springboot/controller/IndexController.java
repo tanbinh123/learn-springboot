@@ -3,7 +3,7 @@ package com.sn.springboot.controller;
 import com.sn.springboot.activemq.ActiveMQSendService;
 import com.sn.springboot.pojo.*;
 import com.sn.springboot.rabbitmq.direct.RabbitMQDirectSendService;
-import com.sn.springboot.service.CookieService;
+import com.sn.springboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,7 +18,7 @@ import java.util.List;
 public class IndexController {
 
     @Autowired
-    private CookieService cookieService;
+    private UserService cookieService;
 
     @Autowired
     private ActiveMQSendService activeMqSendService;
@@ -36,12 +36,6 @@ public class IndexController {
         System.out.println(modelMap.getAttribute("key"));
         int i = 1 / 0;
         return "index";
-    }
-
-    @ResponseBody
-    @RequestMapping("/getUserById")
-    public Cookie getUserById(Integer id) {
-        return cookieService.getCookieById(id);
     }
 
     @GetMapping("/convert")

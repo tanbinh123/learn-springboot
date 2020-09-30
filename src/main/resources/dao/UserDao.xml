@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sn.springboot.dao.UserDao">
+    <insert id="addUser" parameterType="user" useGeneratedKeys="true" keyProperty="id">
+        insert into s_user (name, age, time) values (#{name}, #{age}, #{time})
+    </insert>
+
+    <update id="updateUser">
+        update s_user
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="age > 0">
+                age = #{age},
+            </if>
+            time = #{time}
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="deleteUserById">
+        delete from s_user where id = #{id}
+    </delete>
+
+    <select id="getUserById" resultType="user">
+        select *
+        from s_user
+        where id = #{id}
+    </select>
+
+    <select id="getUsers" resultType="user">
+        select * from s_user
+        <where>
+            <if test="name != null and name != ''">
+                name like concat('%', #{name}, '%')
+            </if>
+            <if test="age > 0">
+                age = #{age}
+            </if>
+        </where>
+    </select>
+</mapper>

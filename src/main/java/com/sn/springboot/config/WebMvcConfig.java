@@ -1,13 +1,9 @@
 package com.sn.springboot.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sn.springboot.interceptor.MyInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.*;
-
-import java.text.SimpleDateFormat;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
@@ -20,12 +16,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
 //        return converter;
 //    }
 
-    @Bean
-    ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
-        return objectMapper;
-    }
+//    @Bean
+//    ObjectMapper objectMapper() {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
+//        return objectMapper;
+//    }
 
     /**
      * 全局配置跨域请求

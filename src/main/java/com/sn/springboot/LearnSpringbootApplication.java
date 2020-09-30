@@ -18,7 +18,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableAsync
 @EnableEurekaClient
 @PropertySource(value = {"classpath:jdbc.properties"}, ignoreResourceNotFound = true)
+// 扫描MyBatis Mapper的包
 @MapperScan(basePackages = "com.sn.springboot.dao", annotationClass = Repository.class)
+// 开启Spring缓存
 @EnableCaching
 public class LearnSpringbootApplication implements WebMvcConfigurer {
 
