@@ -1,6 +1,7 @@
 package com.sn.springboot;
 
 import com.sn.springboot.aop.CoffeeShop;
+import com.sn.springboot.ehcache.EhcacheService;
 import com.sn.springboot.mail.MailService;
 import com.sn.springboot.properties.DataBaseProperties3;
 import com.sn.springboot.redis.RedisService;
@@ -30,12 +31,17 @@ class LearnSpringbootApplicationTests {
     @Autowired
     MailService mailService;
 
+    @Autowired
+    EhcacheService ehcacheService;
+
     @Test
     void doTest() {
 //        System.out.println(dataBaseProperties.getDriverName());
 //        coffeeShop.sale("拿铁");
-        redisService2.deletePiplineKV();
+//        redisService2.deletePiplineKV();
 //        mailService.send();
+        System.out.println(ehcacheService.getUserById(1L));
+        System.out.println(ehcacheService.getUserById(1L));
     }
 
 }
