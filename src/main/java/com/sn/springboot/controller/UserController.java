@@ -1,7 +1,7 @@
 package com.sn.springboot.controller;
 
 import com.sn.springboot.pojo.User;
-import com.sn.springboot.service.UserService;
+import com.sn.springboot.redis.cache.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

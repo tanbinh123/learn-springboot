@@ -1,4 +1,4 @@
-package com.sn.springboot.service;
+package com.sn.springboot.redis.cache;
 
 import com.sn.springboot.pojo.User;
 
