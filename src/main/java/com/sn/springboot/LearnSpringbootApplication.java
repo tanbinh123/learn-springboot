@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -22,6 +23,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @MapperScan(basePackages = "com.sn.springboot.dao", annotationClass = Repository.class)
 // 开启Spring缓存
 @EnableCaching
+// 开启Spring安全认证
+@EnableWebSecurity
 public class LearnSpringbootApplication implements WebMvcConfigurer {
 
     @Bean
