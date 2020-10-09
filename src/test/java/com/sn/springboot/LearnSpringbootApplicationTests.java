@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
@@ -40,8 +42,11 @@ class LearnSpringbootApplicationTests {
 //        coffeeShop.sale("拿铁");
 //        redisService2.deletePiplineKV();
 //        mailService.send();
-        System.out.println(ehcacheService.getUserById(1L));
-        System.out.println(ehcacheService.getUserById(1L));
+//        System.out.println(ehcacheService.getUserById(1L));
+//        System.out.println(ehcacheService.getUserById(1L));
+
+        PasswordEncoder passwordEncoder = new Pbkdf2PasswordEncoder("qazwsxedc");
+        System.out.println(passwordEncoder.encode("123456"));
     }
 
 }
