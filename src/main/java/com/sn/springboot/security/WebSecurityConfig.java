@@ -1,15 +1,31 @@
 package com.sn.springboot.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AccountExpiredException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -18,6 +34,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private DataSource dataSource;
+
+    @Autowired
+    private UserService userService;
 
     private static final String userQuery = "select name, password, available from s_user where name = ?";
     private static final String roleQuery = "select u.name, r.role_name " +
@@ -34,6 +53,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 //        super.configure(auth);
         // 使用数据库定义用户认证服务
+
+//        auth.userDetailsService(userService);
 
         // 密码编码器
 //        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -69,8 +90,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/upload.html").access("hasRole('USER') or hasRole('ADMIN')")
                 // 用户有ROLE_ADMIN角色，并且是完整登录而不是通过remember me，才可以访问
                 .antMatchers("/upload3.html").access("hasAuthority('ROLE_ADMIN')")
-                // 所有用户都可以访问登录页面
-                .antMatchers("/admin/login","/admin/logout_result").permitAll()
+                // 所有用户都可以访问登录页面、退出后的提示页面
+                .antMatchers("/admin/login", "/admin/logout_result").permitAll()
+                // 其它请求登录后就可以访问
                 .anyRequest().authenticated()
 
 //                .and()
@@ -84,13 +106,67 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .rememberMe().tokenValiditySeconds(120).key("remember-me-key")
 //
                 .and()
-                // 只配置formLogin则使用默认的登录页面，loginPage配置自定义登录页面，defaultSuccessUrl为登录成功的跳转页面
+                // 只配置formLogin则使用默认的登录页面，loginPage配置自定义登录页面的接口，
+                // 前后端分离时，loginPage配置的接口可以返回JSON数据来提示客户端需要登录，
+                // defaultSuccessUrl可以配置登录成功的跳转页面
                 .formLogin()
                 .loginPage("/admin/login").defaultSuccessUrl("/main/index")
+                // 需要测试能否代替antMatchers("/admin/login")
+//                .permitAll()
+
+                // 登录成功要返回JSON格式数据的回调
+                .successHandler(new AuthenticationSuccessHandler() {
+                    @Override
+                    public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse resp, Authentication auth) throws IOException, ServletException {
+                        resp.setContentType("application/json;charset=utf-8");
+                        PrintWriter pw = resp.getWriter();
+                        HashMap<String, Object> result = new HashMap<>();
+                        result.put("status", 200);
+                        result.put("data", auth.getPrincipal());
+                        result.put("msg", "登录成功");
+                        pw.write(new ObjectMapper().writeValueAsString(result));
+                        pw.flush();
+                        pw.close();
+                    }
+                })
+
+                // 登录失败要返回JSON格式数据的回调
+                .failureHandler(new AuthenticationFailureHandler() {
+                    @Override
+                    public void onAuthenticationFailure(HttpServletRequest req, HttpServletResponse resp, AuthenticationException e) throws IOException, ServletException {
+                        resp.setContentType("application/json;charset=utf-8");
+                        PrintWriter pw = resp.getWriter();
+                        HashMap<String, Object> result = new HashMap<>();
+                        result.put("status", 401);
+                        result.put("data", "");
+                        String msg = "";
+                        if (e instanceof LockedException) {
+                            msg = "账号被锁";
+                        } else if (e instanceof BadCredentialsException) {
+                            msg = "账号或密码错误";
+                        } else if (e instanceof DisabledException) {
+                            msg = "账号被禁用";
+                        } else {
+                            msg = "登录失败";
+                        }
+                        result.put("msg", msg);
+                        pw.write(new ObjectMapper().writeValueAsString(result));
+                        pw.flush();
+                        pw.close();
+                    }
+                })
 
                 .and()
 //                // 配置登出页面及其跳转页面，登出的请求需要是POST
                 .logout().logoutUrl("/admin/logout").logoutSuccessUrl("/admin/logout_result")
+
+                // 退出登录成功后要返回JSON格式数据的回调
+//                .logoutSuccessHandler(new LogoutSuccessHandler() {
+//                    @Override
+//                    public void onLogoutSuccess(HttpServletRequest req, HttpServletResponse resp, Authentication auth) throws IOException, ServletException {
+//
+//                    }
+//                })
 
                 .and()
                 // 启用浏览器的HTTP基础验证
