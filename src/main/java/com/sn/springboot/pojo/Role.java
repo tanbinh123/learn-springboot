@@ -1,5 +1,8 @@
 package com.sn.springboot.pojo;
 
+import org.apache.ibatis.type.Alias;
+
+@Alias("role")
 public class Role {
     private Long id;
 
