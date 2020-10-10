@@ -59,7 +59,7 @@ public class IndexController {
      * @param book
      */
     @PostMapping("/add")
-    public void addInfo(@ModelAttribute("user") User user, @ModelAttribute("book") Book book) {
+    public void addInfo(@ModelAttribute("user") Animal user, @ModelAttribute("book") Book book) {
         System.out.println(user);
         System.out.println(book);
     }

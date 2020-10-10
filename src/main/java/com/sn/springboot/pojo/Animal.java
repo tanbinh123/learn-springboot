@@ -7,8 +7,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.io.Serializable;
 import java.util.Date;
 
-@Alias("user")
-public class User implements Serializable {
+@Alias("animal")
+public class Animal implements Serializable {
     private static final long serialVersionUID = -8487606313547156526L;
     private Long id;
 

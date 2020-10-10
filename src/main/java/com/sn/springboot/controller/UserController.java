@@ -1,7 +1,7 @@
 package com.sn.springboot.controller;
 
-import com.sn.springboot.pojo.User;
-import com.sn.springboot.redis.cache.UserService;
+import com.sn.springboot.pojo.Animal;
+import com.sn.springboot.redis.cache.AnimalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,35 +16,35 @@ import java.util.List;
  * 时间：2020/9/30 11:16
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/animal")
 public class UserController {
     @Autowired
-    private UserService userService;
+    private AnimalService animalService;
 
-    @PostMapping("/addUser")
-    public User addUser(User user) {
-        return userService.addUser(user);
+    @PostMapping("/addAnimal")
+    public Animal addUserAnimal(Animal animal) {
+        return animalService.addAnimal(animal);
     }
 
-    @GetMapping("/getUserById")
-    public User getUserById(Long id) {
-        return userService.getUserById(id);
+    @GetMapping("/getAnimalById")
+    public Animal getAnimalById(Long id) {
+        return animalService.getAnimalById(id);
     }
 
-    @GetMapping("/getUsers")
-    public List<User> getUsers(String name, Integer age) {
-        return userService.getUsers(name, age);
+    @GetMapping("/getAnimals")
+    public List<Animal> getAnimals(String name, Integer age) {
+        return animalService.getAnimals(name, age);
     }
 
-    @PostMapping("/updateUser")
-    public String updateUser(User user) {
-        User u = userService.updateUser(user);
+    @PostMapping("/updateAnimal")
+    public String updateAnimal(Animal animal) {
+        Animal u = animalService.updateAnimal(animal);
         return u == null ? "更新失败" : "更新成功";
     }
 
-    @GetMapping("/deleteUserById")
-    public String deleteUserById(Long id) {
-        int row = userService.deleteUserById(id);
+    @GetMapping("/deleteAnimalById")
+    public String deleteAnimalById(Long id) {
+        int row = animalService.deleteAnimalById(id);
         return row > 0 ? "删除成功" : "删除失败";
     }
 }

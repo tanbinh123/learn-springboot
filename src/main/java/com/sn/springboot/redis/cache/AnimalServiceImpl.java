@@ -1,7 +1,7 @@
 package com.sn.springboot.redis.cache;
 
-import com.sn.springboot.dao.UserDao;
-import com.sn.springboot.pojo.User;
+import com.sn.springboot.dao.AnimalDao;
+import com.sn.springboot.pojo.Animal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -21,9 +21,9 @@ import java.util.List;
 @Service
 // 统一配置缓存名称
 @CacheConfig(cacheNames = "redisCache")
-public class UserServiceImpl implements UserService {
+public class AnimalServiceImpl implements AnimalService {
     @Autowired
-    private UserDao userDao;
+    private AnimalDao animalDao;
 
     /**
      * @CachePut 表示将方法的返回结果进行缓存，默认情况方法的参数值就是key
@@ -32,10 +32,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
 //    @CachePut(value = "redisCache", key = "'redis_user_'+#result.id")
-    @CachePut(key = "'redis_user_'+#result.id")
-    public User addUser(User user) {
+    @CachePut(key = "'redis_animal_'+#result.id")
+    public Animal addAnimal(Animal user) {
         user.setTime(new Date());
-        userDao.addUser(user);
+        animalDao.addAnimal(user);
         return user;
     }
 
@@ -43,9 +43,9 @@ public class UserServiceImpl implements UserService {
      * @Cacheable 表示先从缓存中查询键对应的值，如果查询到了则返回，否则执行该方法来返回数据，并将返回值进行缓存
      */
     @Override
-    @Cacheable(key = "'redis_user_'+#id")
-    public User getUserById(Long id) {
-        User user = userDao.getUserById(id);
+    @Cacheable(key = "'redis_animal_'+#id")
+    public Animal getAnimalById(Long id) {
+        Animal user = animalDao.getAnimalById(id);
         if (user == null) {
             return null;
         }
@@ -53,23 +53,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getUsers(String name, Integer age) {
-        return userDao.getUsers(name, age);
+    public List<Animal> getAnimals(String name, Integer age) {
+        return animalDao.getAnimals(name, age);
     }
 
     /**
      * condition = "result != null"，表示如果查询结果为null，则不缓存结果
      */
     @Override
-    @CachePut(key = "'redis_user_'+#user.id", condition = "#result != null")
-    public User updateUser(User user) {
-        User u = userDao.getUserById(user.getId());
+    @CachePut(key = "'redis_animal_'+#animal.id", condition = "#result != null")
+    public Animal updateAnimal(Animal animal) {
+        Animal u = animalDao.getAnimalById(animal.getId());
         if (u == null) {
             return null;
         }
-        user.setTime(new Date());
-        userDao.updateUser(user);
-        u = userDao.getUserById(user.getId());
+        animal.setTime(new Date());
+        animalDao.updateAnimal(animal);
+        u = animalDao.getAnimalById(animal.getId());
         return u;
     }
 
@@ -78,8 +78,8 @@ public class UserServiceImpl implements UserService {
      * beforeInvocation = false，表示在方法执行之后移除缓存，也是默认的配置
      */
     @Override
-    @CacheEvict(key = "'redis_user_'+#id", beforeInvocation = false)
-    public int deleteUserById(Long id) {
-        return userDao.deleteUserById(id);
+    @CacheEvict(key = "'redis_animal_'+#id", beforeInvocation = false)
+    public int deleteAnimalById(Long id) {
+        return animalDao.deleteAnimalById(id);
     }
 }

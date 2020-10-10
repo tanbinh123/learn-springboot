@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.sn.springboot.dao.UserDao">
-    <insert id="addUser" parameterType="user" useGeneratedKeys="true" keyProperty="id">
-        insert into s_user (name, age, time) values (#{name}, #{age}, #{time})
+<mapper namespace="com.sn.springboot.dao.AnimalDao">
+    <insert id="addAnimal" parameterType="animal" useGeneratedKeys="true" keyProperty="id">
+        insert into s_animal (name, age, time) values (#{name}, #{age}, #{time})
     </insert>
 
-    <update id="updateUser">
-        update s_user
+    <update id="updateAnimal">
+        update s_animal
         <set>
             <if test="name != null and name != ''">
                 name = #{name},
@@ -21,18 +21,18 @@
         </where>
     </update>
 
-    <delete id="deleteUserById">
-        delete from s_user where id = #{id}
+    <delete id="deleteAnimalById">
+        delete from s_animal where id = #{id}
     </delete>
 
-    <select id="getUserById" resultType="user">
+    <select id="getAnimalById" resultType="animal">
         select *
-        from s_user
+        from s_animal
         where id = #{id}
     </select>
 
-    <select id="getUsers" resultType="user">
-        select * from s_user
+    <select id="getAnimals" resultType="animal">
+        select * from s_animal
         <where>
             <if test="name != null and name != ''">
                 name like concat('%', #{name}, '%')
