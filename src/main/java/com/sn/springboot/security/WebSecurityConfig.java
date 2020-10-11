@@ -5,13 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.*;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import javax.servlet.ServletException;
@@ -33,14 +37,37 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RoleFilter roleFilter;
+
+    @Autowired
+    private MyAccessDecisionManager myAccessDecisionManager;
+
     private static final String userQuery = "select name, password, enabled from s_user where name = ?";
     private static final String roleQuery = "select u.name, r.role_code " +
             "from s_user u, s_role r, s_user_role ur " +
             "where u.id = ur.user_id and r.id = ur.role_id and u.name = ?";
 
+    /**
+     * menu:id,pattern
+     * <p>
+     * role_menu:id,role_id,menu_id
+     */
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new Pbkdf2PasswordEncoder(secret);
+    }
+
+    /**
+     * 角色继承
+     */
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        String hierarchy = "ROLE_ADMIN > ROLE_USER \n ROLE_DBA > ROLE_USER";
+        roleHierarchy.setHierarchy(hierarchy);
+        return roleHierarchy;
     }
 
     /**
@@ -95,6 +122,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/admin/login", "/admin/logout_result").permitAll()
                 // 其它请求登录后就可以访问
                 .anyRequest().authenticated()
+
+                // 动态配置角色的访问权限
+//                .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
+//                    @Override
+//                    public <O extends FilterSecurityInterceptor> O postProcess(O o) {
+//                        o.setAccessDecisionManager(myAccessDecisionManager);
+//                        o.setSecurityMetadataSource(roleFilter);
+//                        return o;
+//                    }
+//                })
 
 //                .and()
                 // 允许匿名访问没有配置过权限的路径
