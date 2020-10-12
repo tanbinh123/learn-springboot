@@ -11,6 +11,8 @@ import java.util.List;
 
 @Alias("user")
 public class User implements UserDetails {
+    private static final long serialVersionUID = -5818983542275051139L;
+
     private Long id;
 
     private String username;

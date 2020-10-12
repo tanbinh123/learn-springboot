@@ -22,6 +22,7 @@ public class MyAccessDecisionManager implements AccessDecisionManager {
         for (ConfigAttribute configAttribute : configAttributes) {
             // 如果是RoleFilter中返回的标记
             if ("ROLE_LOGIN".equals(configAttribute.getAttribute())) {
+                // 是匿名用户
                 if (authentication instanceof AnonymousAuthenticationToken) {
                     throw new AccessDeniedException("非法请求");
                 } else {
@@ -38,7 +39,7 @@ public class MyAccessDecisionManager implements AccessDecisionManager {
                 }
             }
         }
-        throw new AccessDeniedException("非法请求");
+        throw new AccessDeniedException("非法访问");
     }
 
     @Override

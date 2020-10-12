@@ -5,16 +5,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
@@ -26,7 +29,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
-@Configuration
+//@Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${system.user.password.secret}")
     private String secret;
@@ -38,7 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserService userService;
 
     @Autowired
-    private RoleFilter roleFilter;
+    private MyFilterInvocationSecurityMetadataSource myFilterInvocationSecurityMetadataSource;
 
     @Autowired
     private MyAccessDecisionManager myAccessDecisionManager;
@@ -48,26 +51,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "from s_user u, s_role r, s_user_role ur " +
             "where u.id = ur.user_id and r.id = ur.role_id and u.name = ?";
 
-    /**
-     * menu:id,pattern
-     * <p>
-     * role_menu:id,role_id,menu_id
-     */
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new Pbkdf2PasswordEncoder(secret);
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new Pbkdf2PasswordEncoder(secret);
+//    }
 
     /**
      * 角色继承
+     * ？？？测试发现使用动态权限时，角色继承失效
      */
     @Bean
     public RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        String hierarchy = "ROLE_ADMIN > ROLE_USER \n ROLE_DBA > ROLE_USER";
+        String hierarchy = "ROLE_ADMIN > ROLE_SUPPORTER \n ROLE_SUPPORTER > ROLE_USER";
         roleHierarchy.setHierarchy(hierarchy);
         return roleHierarchy;
+    }
+
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+//        web.ignoring().antMatchers("/login");
     }
 
     /**
@@ -83,7 +87,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // 密码编码器
 //        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-//        PasswordEncoder passwordEncoder = new Pbkdf2PasswordEncoder(secret);
+        PasswordEncoder passwordEncoder = new Pbkdf2PasswordEncoder(secret);
 
 //        auth.jdbcAuthentication()
         // 设置密码编码器
@@ -96,7 +100,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .authoritiesByUsernameQuery(roleQuery);
 
         // 这种用法需要使用passwordEncoder来配置加密
-        auth.userDetailsService(userService);
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
     }
 
     /**
@@ -115,23 +119,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/sn/admin/**").hasAuthority("ROLE_ADMIN")
                 // 使用Spring EL配置那些角色可以访问指定路径
                 // 有USER或ADMIN角色的用户才可以访问
-                .antMatchers("/upload.html").access("hasRole('USER') or hasRole('ADMIN')")
+//                .antMatchers("/user/hello").access("hasRole('USER') or hasRole('ADMIN')")
                 // 用户有ROLE_ADMIN角色，并且是完整登录而不是通过remember me，才可以访问
-                .antMatchers("/upload3.html").access("hasAuthority('ROLE_ADMIN')")
+//                .antMatchers("/admin/hello").access("hasAuthority('ROLE_ADMIN')")
+//                .antMatchers("/supporter/hello").access("hasAuthority('ROLE_SUPPORTER')")
                 // 所有用户都可以访问登录页面、退出后的提示页面
-//                .antMatchers("/admin/login", "/admin/logout_result").permitAll()
-                // 其它请求登录后就可以访问
-                .anyRequest().authenticated()
+//                .antMatchers("/login", "/logout_result").permitAll()
 
                 // 动态配置角色的访问权限
-//                .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
-//                    @Override
-//                    public <O extends FilterSecurityInterceptor> O postProcess(O o) {
-//                        o.setAccessDecisionManager(myAccessDecisionManager);
-//                        o.setSecurityMetadataSource(roleFilter);
-//                        return o;
-//                    }
-//                })
+                .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
+                    @Override
+                    public <O extends FilterSecurityInterceptor> O postProcess(O o) {
+                        o.setAccessDecisionManager(myAccessDecisionManager);
+                        o.setSecurityMetadataSource(myFilterInvocationSecurityMetadataSource);
+                        return o;
+                    }
+                })
+                // 其它请求登录后就可以访问
+                .anyRequest().authenticated()
 
 //                .and()
                 // 允许匿名访问没有配置过权限的路径
@@ -151,7 +156,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 2：访问其它地址被重定向到登录页面，然后登录成功后，不会跳转到defaultSuccessUrl配置的页面，而是登录页面的前一个页面
                 // successForwardUrl可以保证登录成功后跳转到其指定的页面路径
                 .formLogin()
-                .loginPage("/admin/login").defaultSuccessUrl("/main/index")
+//                .loginPage("/login").defaultSuccessUrl("/main/index")
                 // 登录页面不做访问控制
                 .permitAll()
 
@@ -204,13 +209,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 // 配置登出页面及其跳转页面，登出的请求需要是POST
                 .logout()
-                .logoutUrl("/admin/logout").logoutSuccessUrl("/admin/logout_result")
+                .logoutUrl("/logout").logoutSuccessUrl("/logout_result")
                 .permitAll()
 
                 // 退出登录成功后要返回JSON格式数据的回调
 //                .logoutSuccessHandler(new LogoutSuccessHandler() {
 //                    @Override
 //                    public void onLogoutSuccess(HttpServletRequest req, HttpServletResponse resp, Authentication auth) throws IOException, ServletException {
+//
+//                    }
+//                })
+
+                // 无权限时的异常处理
+//                .and()
+//                .exceptionHandling().accessDeniedHandler(new AccessDeniedHandler(){
+//                    @Override
+//                    public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
 //
 //                    }
 //                })

@@ -1,0 +1,20 @@
+1、获取token
+POST
+http://localhost:8081/sn/oauth/token?username=zhangsan&password=123456&grant_type=password&client_id=password&scope=all&client_secret=123456
+响应
+{
+    "access_token": "gw57n0kgIfGFcEV-kTR1DIMOtes",
+    "token_type": "bearer",
+    "refresh_token": "VaJUJZigyMEhrDXi6n7i7r91K30",
+    "expires_in": 1550,
+    "scope": "all"
+}
+
+2、访问资源
+http://localhost:8081/sn/admin/hello?access_token=gw57n0kgIfGFcEV-kTR1DIMOtes
+
+3、刷新token
+POST
+http://localhost:8081/sn/oauth/token?grant_type=refresh_token&refresh_token=VaJUJZigyMEhrDXi6n7i7r91K30&client_id=password&client_secret=123456
+响应和获取token接口格式一致
+

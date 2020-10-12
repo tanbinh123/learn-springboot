@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class RoleFilter implements FilterInvocationSecurityMetadataSource {
+public class MyFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
     // Ant风格的路径匹配
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
 

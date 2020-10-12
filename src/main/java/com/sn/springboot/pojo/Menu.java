@@ -2,10 +2,13 @@ package com.sn.springboot.pojo;
 
 import org.apache.ibatis.type.Alias;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Alias("menu")
-public class Menu {
+public class Menu implements Serializable {
+    private static final long serialVersionUID = -7146358201405878734L;
+
     private Long id;
 
     private String pattern;

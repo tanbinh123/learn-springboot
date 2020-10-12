@@ -2,8 +2,12 @@ package com.sn.springboot.pojo;
 
 import org.apache.ibatis.type.Alias;
 
+import java.io.Serializable;
+
 @Alias("role")
-public class Role {
+public class Role implements Serializable {
+    private static final long serialVersionUID = 1686082419421920171L;
+
     private Long id;
 
     private String roleCode;
