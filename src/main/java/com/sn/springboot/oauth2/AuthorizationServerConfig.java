@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 /**
@@ -37,6 +38,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private ClientService clientService;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new Pbkdf2PasswordEncoder(secret);
@@ -44,13 +48,15 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
-                .withClient("password")
-                .authorizedGrantTypes("password", "refresh_token")
-                .resourceIds("rid")
-                .scopes("all")
-                .accessTokenValiditySeconds(1800)
-                .secret("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e");
+        clients.withClientDetails(clientService);
+//        clients.inMemory()
+//                .withClient("client_one")
+//                .authorizedGrantTypes("password", "refresh_token")
+//                .resourceIds("rid")
+//                .scopes("all")
+//                .accessTokenValiditySeconds(1800)
+//                .authorities()
+//                .secret("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e");
     }
 
     @Override
