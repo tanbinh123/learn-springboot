@@ -101,7 +101,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .authoritiesByUsernameQuery(roleQuery);
 
         // 这种用法需要使用passwordEncoder来配置加密
-        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
+//        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
+
+        auth.inMemoryAuthentication()
+                .passwordEncoder(passwordEncoder)
+                .withUser("zhangsan")
+                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
+                .roles("ADMIN", "USER");
     }
 
     /**
@@ -118,9 +124,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 // 将/sn/blog/**、/sn/user/**（Ant风格的路径配置）路径的访问权限赋予给角色USER、ADMIN
                 // hasAnyRole方法会默认在角色前添加ROLE_
-//                .antMatchers("/user/**", "/user/**").hasAnyRole("USER", "ADMIN")
-//                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-//                .antMatchers("/supporter/**").hasAuthority("ROLE_SUPPORTER")
+                .antMatchers("/user/**", "/user/**").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/supporter/**").hasAuthority("ROLE_SUPPORTER")
 
                 // 使用Spring EL配置那些角色可以访问指定路径
                 // 有USER或ADMIN角色的用户才可以访问
@@ -132,14 +138,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/login", "/logout_result").permitAll()
 
                 // 动态配置角色的访问权限
-                .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
-                    @Override
-                    public <O extends FilterSecurityInterceptor> O postProcess(O o) {
-                        o.setAccessDecisionManager(myAccessDecisionManager);
-                        o.setSecurityMetadataSource(myFilterInvocationSecurityMetadataSource);
-                        return o;
-                    }
-                })
+//                .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
+//                    @Override
+//                    public <O extends FilterSecurityInterceptor> O postProcess(O o) {
+//                        o.setAccessDecisionManager(myAccessDecisionManager);
+//                        o.setSecurityMetadataSource(myFilterInvocationSecurityMetadataSource);
+//                        return o;
+//                    }
+//                })
                 // 其它任意请求登录后就可以访问
                 .anyRequest().authenticated()
 
@@ -161,7 +167,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 2：访问其它地址被重定向到登录页面，然后登录成功后，不会跳转到defaultSuccessUrl配置的页面，而是登录页面的前一个页面
                 // successForwardUrl可以保证登录成功后跳转到其指定的页面路径
                 .formLogin()
-//                .loginPage("/login").defaultSuccessUrl("/main/index")
+                .loginPage("/login").defaultSuccessUrl("/main/index")
                 // 登录页面不做访问控制
                 .permitAll()
 

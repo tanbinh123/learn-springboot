@@ -110,4 +110,9 @@ public class IndexController {
         rabbitMQSendService.sendMessage(title);
         return "message:" + title;
     }
+
+    @GetMapping("/websocket")
+    public String websocket(){
+        return "websocket";
+    }
 }
