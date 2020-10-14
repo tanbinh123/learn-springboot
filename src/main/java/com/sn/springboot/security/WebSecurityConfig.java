@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
-//@Configuration
+@Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${system.user.password.secret}")
     private String secret;
@@ -113,11 +113,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 //        super.configure(http);
-        http.authorizeRequests()
+        http
+                // 通过签名的请求
+                .authorizeRequests()
                 // 将/sn/blog/**、/sn/user/**（Ant风格的路径配置）路径的访问权限赋予给角色USER、ADMIN
                 // hasAnyRole方法会默认在角色前添加ROLE_
-//                .antMatchers("/sn/blog/**", "/sn/user/**").hasAnyRole("USER", "ADMIN")
-//                .antMatchers("/sn/admin/**").hasAuthority("ROLE_ADMIN")
+//                .antMatchers("/user/**", "/user/**").hasAnyRole("USER", "ADMIN")
+//                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+//                .antMatchers("/supporter/**").hasAuthority("ROLE_SUPPORTER")
+
                 // 使用Spring EL配置那些角色可以访问指定路径
                 // 有USER或ADMIN角色的用户才可以访问
 //                .antMatchers("/user/hello").access("hasRole('USER') or hasRole('ADMIN')")
@@ -136,7 +140,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         return o;
                     }
                 })
-                // 其它请求登录后就可以访问
+                // 其它任意请求登录后就可以访问
                 .anyRequest().authenticated()
 
 //                .and()

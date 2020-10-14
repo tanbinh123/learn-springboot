@@ -23,8 +23,8 @@ import org.springframework.security.oauth2.provider.token.store.redis.RedisToken
  * 授权服务器
  * https://www.cnblogs.com/charlypage/p/9383420.html
  */
-@Configuration
-@EnableAuthorizationServer
+//@Configuration
+//@EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
     @Value("${system.user.password.secret}")
     private String secret;
