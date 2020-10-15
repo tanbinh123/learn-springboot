@@ -105,9 +105,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         auth.inMemoryAuthentication()
                 .passwordEncoder(passwordEncoder)
+
                 .withUser("zhangsan")
                 .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
-                .roles("ADMIN", "USER");
+                .roles("ADMIN", "USER")
+
+                .and()
+                .withUser("lisi")
+                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
+                .roles("USER")
+
+                .and()
+                .withUser("wangwu")
+                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
+                .roles("SUPPORTER");
+
+
     }
 
     /**

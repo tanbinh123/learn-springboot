@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>send</title>
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/sockjs.min.js"></script>
+    <script src="../js/stomp.min.js"></script>
+</head>
+<script>
+    var stompClient = null;
+
+    function setConnected(connected) {
+        $("#connect").attr({"disabled": connected});
+        $("#disconnect").attr({"disabled": !connected});
+
+        if (connected) {
+            $("#conversationDiv").show();
+        } else {
+            $("#conversationDiv").hide();
+        }
+        $("#response").html("");
+    }
+
+    function connect() {
+        // 定义请求服务器的端点
+        let socket = new SockJS("/sn/groupChat");
+        // stomp客户端
+        stompClient = Stomp.over(socket);
+        // 连接服务器端点
+        stompClient.connect({}, function (frame) {
+            setConnected(true);
+        })
+    }
+
+    function disconnect() {
+        if (stompClient != null) {
+            stompClient.disconnect();
+        }
+        setConnected(false);
+    }
+
+    function sendMsg() {
+        let msg = $("#message").val();
+        // request是StompWebSocketConfig定义的服务器端点请求前缀
+        // sendMsg是WebSocketController中定义的
+        stompClient.send("/request/groupSendMsg", {}, msg);
+    }
+</script>
+<body>
+<div>
+    <button id="connect" onclick="connect()">连接</button>
+    <button id="disconnect" onclick="disconnect()" disabled="disabled">断开连接</button>
+</div>
+<div id="conversationDiv" style="display: none">
+    <p>
+        <label>发送的内容</label>
+    </p>
+    <p>
+        <textarea id="message" rows="5"></textarea>
+    </p>
+    <button id="sedMsg" onclick="sendMsg()">发送</button>
+    <p id="response"></p>
+</div>
+</body>
+</html>

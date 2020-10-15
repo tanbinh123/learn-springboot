@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>receive</title>
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/sockjs.min.js"></script>
+    <script src="../js/stomp.min.js"></script>
+</head>
+<script>
+    function connect() {
+        // 定义请求服务器的端点
+        let socket = new SockJS("/sn/singleChat");
+        // stomp客户端
+        let stompClient = Stomp.over(socket);
+        // 连接服务器端点
+        stompClient.connect({}, function (frame) {
+            $("#receive").html("连接成功，等待接收消息");
+            // 订阅消息地址来接收消息
+            // user表示订阅指定用户的消息
+            // 对应sendMsgToUser里的/single/chat
+            stompClient.subscribe("/user/single/chat", function (data) {
+                $("#receive").html(data.body);
+            });
+        })
+    }
+
+    connect();
+</script>
+<body>
+<p id="receive"></p>
+</body>
+</html>
