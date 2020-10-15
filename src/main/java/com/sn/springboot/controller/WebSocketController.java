@@ -1,12 +1,15 @@
 package com.sn.springboot.controller;
 
+import com.sn.springboot.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
 
@@ -70,5 +73,17 @@ public class WebSocketController {
         String destName = args[0];
         String msg = "【" + srcName + "】发的消息：" + args[1];
         simpMessagingTemplate.convertAndSendToUser(destName, "/single/chat", msg);
+    }
+
+    @GetMapping("/push/{username}")
+    @ResponseBody
+    public void push(@PathVariable("username") String username) {
+        WebSocketService.sendMessage(username, "服务端：主动推送的消息");
+    }
+
+    @GetMapping("/pushAll")
+    @ResponseBody
+    public void pushAll() {
+        WebSocketService.sendMessageToAll("服务端：主动推送的消息");
     }
 }
