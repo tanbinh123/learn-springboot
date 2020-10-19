@@ -35,6 +35,12 @@ public class SecurityController {
         return "common hello";
     }
 
+    @GetMapping("/main/hello")
+    @ResponseBody
+    public String main() {
+        return "main hello";
+    }
+
     @GetMapping("/login")
     public String login() {
         return "login";

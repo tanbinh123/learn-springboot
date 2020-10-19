@@ -21,6 +21,8 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +54,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "from s_user u, s_role r, s_user_role ur " +
             "where u.id = ur.user_id and r.id = ur.role_id and u.name = ?";
 
+    @Bean
+    public JdbcTokenRepositoryImpl jdbcTokenRepository() {
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource);
+        return jdbcTokenRepository;
+    }
+
 //    @Bean
 //    public PasswordEncoder passwordEncoder() {
 //        return new Pbkdf2PasswordEncoder(secret);
@@ -73,6 +82,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
 //        web.ignoring().antMatchers("/login");
+        // 不拦截静态资源
+        web.ignoring().antMatchers("/js/**", "/css/**", "/images/**");
     }
 
     /**
@@ -140,11 +151,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/**", "/user/**").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/supporter/**").hasAuthority("ROLE_SUPPORTER")
+                // 是完整登录而不是通过remember me，才可以访问，目的是为了安全需要进行二次校验
+                .antMatchers("/main/hello").fullyAuthenticated()
 
                 // 使用Spring EL配置那些角色可以访问指定路径
                 // 有USER或ADMIN角色的用户才可以访问
 //                .antMatchers("/user/hello").access("hasRole('USER') or hasRole('ADMIN')")
-                // 用户有ROLE_ADMIN角色，并且是完整登录而不是通过remember me，才可以访问
 //                .antMatchers("/admin/hello").access("hasAuthority('ROLE_ADMIN')")
 //                .antMatchers("/supporter/hello").access("hasAuthority('ROLE_SUPPORTER')")
                 // 所有用户都可以访问登录页面、退出后的提示页面
@@ -171,6 +183,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                // 使用记住我的功能，避免每次都输入密码
 //                // 有效时间86400秒=1天，保存到cookie中的键是remember-me-key
                 .rememberMe().tokenValiditySeconds(120).key("remember-me-key")
+                // 配置token持久化
+                .tokenRepository(jdbcTokenRepository())
 //
                 .and()
                 // 只配置formLogin则使用默认的登录页面，loginPage配置自定义登录页面的接口，
@@ -180,7 +194,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 2：访问其它地址被重定向到登录页面，然后登录成功后，不会跳转到defaultSuccessUrl配置的页面，而是登录页面的前一个页面
                 // successForwardUrl可以保证登录成功后跳转到其指定的页面路径
                 .formLogin()
+                // /login表示登陆页面接口，同时也表示默认登录的接口也是/login（可以用loginProcessingUrl配置）
                 .loginPage("/login").defaultSuccessUrl("/main/index")
+//                .usernameParameter("name")
+//                .passwordParameter("pwd")
                 // 登录页面不做访问控制
                 .permitAll()
 
@@ -231,8 +248,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 })
 
                 .and()
-                // 配置登出页面及其跳转页面，登出的请求需要是POST
+                // 配置登出页面及其跳转页面
                 .logout()
+                // logoutUrl方法的参数默认就是/logout，默认get请求；可通过logoutRequestMatcher实现post方式
+//                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
                 .logoutUrl("/logout").logoutSuccessUrl("/logout_result")
                 .permitAll()
 
