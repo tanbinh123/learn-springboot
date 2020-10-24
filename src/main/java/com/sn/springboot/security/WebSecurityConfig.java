@@ -14,13 +14,17 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -112,24 +116,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .authoritiesByUsernameQuery(roleQuery);
 
         // 这种用法需要使用passwordEncoder来配置加密
-//        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
 
-        auth.inMemoryAuthentication()
-                .passwordEncoder(passwordEncoder)
-
-                .withUser("zhangsan")
-                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
-                .roles("ADMIN", "USER")
-
-                .and()
-                .withUser("lisi")
-                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
-                .roles("USER")
-
-                .and()
-                .withUser("wangwu")
-                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
-                .roles("SUPPORTER");
+//        auth.inMemoryAuthentication()
+//                .passwordEncoder(passwordEncoder)
+//
+//                .withUser("zhangsan")
+//                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
+//                .roles("ADMIN", "USER")
+//
+//                .and()
+//                .withUser("lisi")
+//                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
+//                .roles("USER")
+//
+//                .and()
+//                .withUser("wangwu")
+//                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
+//                .roles("SUPPORTER");
 
 
     }
@@ -182,11 +186,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
 //                // 使用记住我的功能，避免每次都输入密码
 //                // 有效时间86400秒=1天，保存到cookie中的键是remember-me-key
-                .rememberMe().tokenValiditySeconds(120).key("remember-me-key")
+//                .rememberMe().tokenValiditySeconds(120).key("remember-me-key")
                 // 配置token持久化
-                .tokenRepository(jdbcTokenRepository())
+//                .tokenRepository(jdbcTokenRepository())
 //
-                .and()
+//                .and()
                 // 只配置formLogin则使用默认的登录页面，loginPage配置自定义登录页面的接口，
                 // 前后端分离时，loginPage配置的接口可以返回JSON数据来提示客户端需要登录，
                 // defaultSuccessUrl可以配置登录成功的跳转页面，但这里分两种情况：
@@ -195,29 +199,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // successForwardUrl可以保证登录成功后跳转到其指定的页面路径
                 .formLogin()
                 // /login表示登陆页面接口，同时也表示默认登录的接口也是/login（可以用loginProcessingUrl配置）
-                .loginPage("/login").defaultSuccessUrl("/main/index")
+                .loginPage("/login")
+//                .defaultSuccessUrl("/main/index")
 //                .usernameParameter("name")
 //                .passwordParameter("pwd")
                 // 登录页面不做访问控制
                 .permitAll()
 
-                // 登录成功要返回JSON格式数据的回调
-//                .successHandler(new AuthenticationSuccessHandler() {
-//                    @Override
-//                    public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse resp, Authentication auth) throws IOException, ServletException {
-//                        resp.setContentType("application/json;charset=utf-8");
-//                        PrintWriter pw = resp.getWriter();
-//                        HashMap<String, Object> result = new HashMap<>();
-//                        result.put("status", 200);
-//                        result.put("data", auth.getPrincipal());
-//                        result.put("msg", "登录成功");
-//                        pw.write(new ObjectMapper().writeValueAsString(result));
-//                        pw.flush();
-//                        pw.close();
-//                    }
-//                })
+                // 前后端分离时，登录成功要返回JSON格式数据的回调
+                .successHandler(new AuthenticationSuccessHandler() {
+                    @Override
+                    public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse resp, Authentication auth) throws IOException, ServletException {
+                        resp.setContentType("application/json;charset=utf-8");
+                        PrintWriter pw = resp.getWriter();
+                        HashMap<String, Object> result = new HashMap<>();
+                        result.put("status", 200);
+                        result.put("data", auth.getPrincipal());
+                        result.put("msg", "登录成功");
+                        pw.write(new ObjectMapper().writeValueAsString(result));
+                        pw.flush();
+                        pw.close();
+                    }
+                })
 
-                // 登录失败要返回JSON格式数据的回调
+                // AbstractUserDetailsAuthenticationProvider，在这个类里进行登录异常处理
+                // 前后端分离时， 登录失败要返回JSON格式数据的回调
                 .failureHandler(new AuthenticationFailureHandler() {
                     @Override
                     public void onAuthenticationFailure(HttpServletRequest req, HttpServletResponse resp, AuthenticationException e) throws IOException, ServletException {
@@ -231,10 +237,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                             msg = "账号被锁";
                         } else if (e instanceof DisabledException) {
                             msg = "账号被禁用";
-                        } else if (e instanceof InternalAuthenticationServiceException) {
-                            msg = "账号不存在";
                         } else if (e instanceof BadCredentialsException) {
-                            msg = "密码错误";
+                            msg = "用户名或密码错误";
                         } else if (e instanceof CredentialsExpiredException) {
                             msg = "密码过期";
                         } else {
@@ -252,25 +256,42 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 // logoutUrl方法的参数默认就是/logout，默认get请求；可通过logoutRequestMatcher实现post方式
 //                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
-                .logoutUrl("/logout").logoutSuccessUrl("/logout_result")
+                .logoutUrl("/logout")
+//                .logoutSuccessUrl("/logout_result")
                 .permitAll()
 
-                // 退出登录成功后要返回JSON格式数据的回调
-//                .logoutSuccessHandler(new LogoutSuccessHandler() {
-//                    @Override
-//                    public void onLogoutSuccess(HttpServletRequest req, HttpServletResponse resp, Authentication auth) throws IOException, ServletException {
-//
-//                    }
-//                })
+                // 前后端分离时，退出登录成功后要返回JSON格式数据的回调
+                .logoutSuccessHandler(new LogoutSuccessHandler() {
+                    @Override
+                    public void onLogoutSuccess(HttpServletRequest req, HttpServletResponse resp, Authentication auth) throws IOException, ServletException {
+                        resp.setContentType("application/json;charset=utf-8");
+                        PrintWriter pw = resp.getWriter();
+                        HashMap<String, Object> result = new HashMap<>();
+                        result.put("status", 200);
+                        result.put("data", "");
+                        result.put("msg", "退出成功");
+                        pw.write(new ObjectMapper().writeValueAsString(result));
+                        pw.flush();
+                        pw.close();
+                    }
+                })
 
-                // 无权限时的异常处理
-//                .and()
-//                .exceptionHandling().accessDeniedHandler(new AccessDeniedHandler(){
-//                    @Override
-//                    public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
-//
-//                    }
-//                })
+                // 前后端分离时，未登录时的处理
+                .and()
+                .exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint() {
+            @Override
+            public void commence(HttpServletRequest httpServletRequest, HttpServletResponse resp, AuthenticationException e) throws IOException, ServletException {
+                resp.setContentType("application/json;charset=utf-8");
+                PrintWriter pw = resp.getWriter();
+                HashMap<String, Object> result = new HashMap<>();
+                result.put("status", 401);
+                result.put("data", "");
+                result.put("msg", "请先登录");
+                pw.write(new ObjectMapper().writeValueAsString(result));
+                pw.flush();
+                pw.close();
+            }
+        })
 
                 .and()
                 // 启用浏览器的HTTP基础验证
