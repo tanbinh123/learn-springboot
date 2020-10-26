@@ -16,8 +16,12 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
@@ -116,27 +120,47 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .authoritiesByUsernameQuery(roleQuery);
 
         // 这种用法需要使用passwordEncoder来配置加密
-        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
+//        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
 
-//        auth.inMemoryAuthentication()
-//                .passwordEncoder(passwordEncoder)
-//
-//                .withUser("zhangsan")
-//                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
-//                .roles("ADMIN", "USER")
-//
-//                .and()
-//                .withUser("lisi")
-//                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
-//                .roles("USER")
-//
-//                .and()
-//                .withUser("wangwu")
-//                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
-//                .roles("SUPPORTER");
+        auth.inMemoryAuthentication()
+                .passwordEncoder(passwordEncoder)
+
+                .withUser("zhangsan")
+                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
+                .roles("ADMIN", "USER")
+
+                .and()
+                .withUser("lisi")
+                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
+                .roles("USER")
+
+                .and()
+                .withUser("wangwu")
+                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
+                .roles("SUPPORTER");
 
 
     }
+
+//    @Override
+//    protected UserDetailsService userDetailsService() {
+//        InMemoryUserDetailsManager memoryUserDetailsManager = new InMemoryUserDetailsManager();
+//        memoryUserDetailsManager.createUser(User.withUsername("zhangshan")
+//                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e").roles("ADMIN").build());
+//        memoryUserDetailsManager.createUser(User.withUsername("lisi")
+//                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e").roles("USER").build());
+//        return memoryUserDetailsManager;
+//    }
+
+//    @Override
+//    protected UserDetailsService userDetailsService() {
+//        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
+//        jdbcUserDetailsManager.createUser(User.withUsername("zhangshan")
+//                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e").roles("ADMIN").build());
+//        jdbcUserDetailsManager.createUser(User.withUsername("lisi")
+//                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e").roles("USER").build());
+//        return jdbcUserDetailsManager;
+//    }
 
     /**
      * 指定用户、角色与对应URL的访问权限
@@ -277,21 +301,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 })
 
                 // 前后端分离时，未登录时的处理
-                .and()
-                .exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint() {
-            @Override
-            public void commence(HttpServletRequest httpServletRequest, HttpServletResponse resp, AuthenticationException e) throws IOException, ServletException {
-                resp.setContentType("application/json;charset=utf-8");
-                PrintWriter pw = resp.getWriter();
-                HashMap<String, Object> result = new HashMap<>();
-                result.put("status", 401);
-                result.put("data", "");
-                result.put("msg", "请先登录");
-                pw.write(new ObjectMapper().writeValueAsString(result));
-                pw.flush();
-                pw.close();
-            }
-        })
+//                .and()
+//                .exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint() {
+//            @Override
+//            public void commence(HttpServletRequest httpServletRequest, HttpServletResponse resp, AuthenticationException e) throws IOException, ServletException {
+//                resp.setContentType("application/json;charset=utf-8");
+//                PrintWriter pw = resp.getWriter();
+//                HashMap<String, Object> result = new HashMap<>();
+//                result.put("status", 401);
+//                result.put("data", "");
+//                result.put("msg", "请先登录");
+//                pw.write(new ObjectMapper().writeValueAsString(result));
+//                pw.flush();
+//                pw.close();
+//            }
+//        })
 
                 .and()
                 // 启用浏览器的HTTP基础验证
