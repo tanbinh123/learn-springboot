@@ -224,27 +224,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 // /login表示登陆页面接口，同时也表示默认登录的接口也是/login（可以用loginProcessingUrl配置）
                 .loginPage("/login")
-//                .defaultSuccessUrl("/main/index")
+                .defaultSuccessUrl("/main/index")
 //                .usernameParameter("name")
 //                .passwordParameter("pwd")
                 // 登录页面不做访问控制
                 .permitAll()
 
                 // 前后端分离时，登录成功要返回JSON格式数据的回调
-                .successHandler(new AuthenticationSuccessHandler() {
-                    @Override
-                    public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse resp, Authentication auth) throws IOException, ServletException {
-                        resp.setContentType("application/json;charset=utf-8");
-                        PrintWriter pw = resp.getWriter();
-                        HashMap<String, Object> result = new HashMap<>();
-                        result.put("status", 200);
-                        result.put("data", auth.getPrincipal());
-                        result.put("msg", "登录成功");
-                        pw.write(new ObjectMapper().writeValueAsString(result));
-                        pw.flush();
-                        pw.close();
-                    }
-                })
+//                .successHandler(new AuthenticationSuccessHandler() {
+//                    @Override
+//                    public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse resp, Authentication auth) throws IOException, ServletException {
+//                        resp.setContentType("application/json;charset=utf-8");
+//                        PrintWriter pw = resp.getWriter();
+//                        HashMap<String, Object> result = new HashMap<>();
+//                        result.put("status", 200);
+//                        result.put("data", auth.getPrincipal());
+//                        result.put("msg", "登录成功");
+//                        pw.write(new ObjectMapper().writeValueAsString(result));
+//                        pw.flush();
+//                        pw.close();
+//                    }
+//                })
 
                 // AbstractUserDetailsAuthenticationProvider，在这个类里进行登录异常处理
                 // 前后端分离时， 登录失败要返回JSON格式数据的回调

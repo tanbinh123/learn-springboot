@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sn.springboot.dao.PurchaseDao">
+
+    <select id="getProductById" resultType="product">
+        select *
+        from s_product
+        where id = #{id}
+    </select>
+
+    <update id="decreaseProductStock">
+        update s_product set stock = stock - #{quantity} where id = #{id}
+    </update>
+
+    <insert id="addPurchaseRecord" parameterType="purchaseRecord">
+        insert into
+        s_purchase_record(user_id, product_id, price, sum, quantity, purchase_time)
+        values
+        (#{userId}, #{productId}, #{price}, #{sum}, #{quantity}, now())
+    </insert>
+</mapper>

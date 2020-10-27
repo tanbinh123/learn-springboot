@@ -1,13 +1,13 @@
 package com.sn.springboot.runner;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 可以和CommandLineRunner公用
@@ -16,6 +16,9 @@ import java.util.Set;
 @Component
 @Order(10)
 public class MyApplicationRunner implements ApplicationRunner {
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         String[] sourceArgs = args.getSourceArgs();
@@ -29,5 +32,11 @@ public class MyApplicationRunner implements ApplicationRunner {
         for (String optionName : optionNames) {
             System.out.println(optionName + ":" + args.getOptionValues(optionName));
         }
+
+        Map<String, String> hash = new HashMap<>();
+        hash.put("stock", "10000");
+        hash.put("price", "2299");
+        // 存入散列数据类型
+        stringRedisTemplate.opsForHash().putAll("product_1", hash);
     }
 }
