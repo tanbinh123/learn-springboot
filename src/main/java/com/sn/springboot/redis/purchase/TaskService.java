@@ -69,6 +69,8 @@ public class TaskService {
                 }
                 try {
                     purchaseService.dealRedisPurchase(purchaseRecordList);
+                    // 清除记录
+                    purchaseRecordList.clear();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

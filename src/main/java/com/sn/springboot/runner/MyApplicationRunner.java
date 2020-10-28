@@ -34,7 +34,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         }
 
         Map<String, String> hash = new HashMap<>();
-        hash.put("stock", "10000");
+        hash.put("stock", "20000");
         hash.put("price", "2299");
         // 存入散列数据类型
         stringRedisTemplate.opsForHash().putAll("product_1", hash);
