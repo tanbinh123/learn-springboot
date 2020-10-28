@@ -1,6 +1,7 @@
 package com.sn.springboot.security;
 
 import com.sn.springboot.dao.UserDao;
+import com.sn.springboot.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,10 +15,11 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserDetails userDetails = userDao.getUserByName(username);
-        if (userDetails == null){
+        User user = userDao.getUserByName(username);
+        if (user == null){
             throw new UsernameNotFoundException("用户名不存在");
         }
-        return userDetails;
+        user.setRoles(userDao.getRolesByUserId(user.getId()));
+        return user;
     }
 }

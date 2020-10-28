@@ -120,24 +120,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .authoritiesByUsernameQuery(roleQuery);
 
         // 这种用法需要使用passwordEncoder来配置加密
-//        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
 
-        auth.inMemoryAuthentication()
-                .passwordEncoder(passwordEncoder)
-
-                .withUser("zhangsan")
-                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
-                .roles("ADMIN", "USER")
-
-                .and()
-                .withUser("lisi")
-                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
-                .roles("USER")
-
-                .and()
-                .withUser("wangwu")
-                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
-                .roles("SUPPORTER");
+//        auth.inMemoryAuthentication()
+//                .passwordEncoder(passwordEncoder)
+//
+//                .withUser("zhangsan")
+//                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
+//                .roles("ADMIN", "USER")
+//
+//                .and()
+//                .withUser("lisi")
+//                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
+//                .roles("USER")
+//
+//                .and()
+//                .withUser("wangwu")
+//                .password("fd4aa356ab2efcacf0fabfdd25a12775a9e0a257801559143ed61acf6714924b0ff4913356d00f4e")
+//                .roles("SUPPORTER");
 
 
     }
@@ -181,6 +181,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/supporter/**").hasAuthority("ROLE_SUPPORTER")
                 // 是完整登录而不是通过remember me，才可以访问，目的是为了安全需要进行二次校验
                 .antMatchers("/main/hello").fullyAuthenticated()
+                .antMatchers("/verifyCode").permitAll()
 
                 // 使用Spring EL配置那些角色可以访问指定路径
                 // 有USER或ADMIN角色的用户才可以访问
