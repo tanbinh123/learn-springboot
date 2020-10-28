@@ -24,7 +24,7 @@ public class PurchaseRecord {
 
     private Double sum;
 
-    private Long quantity;
+    private Integer quantity;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date purchaseTime;
@@ -69,14 +69,13 @@ public class PurchaseRecord {
         this.sum = sum;
     }
 
-    public Long getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Long quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
-
 
     public Date getPurchaseTime() {
         return purchaseTime;

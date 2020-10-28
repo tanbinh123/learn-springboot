@@ -12,6 +12,10 @@
         update s_product set stock = stock - #{quantity} where id = #{id}
     </update>
 
+    <update id="decreaseProductStock2">
+        update s_product set stock = stock - #{quantity}, version = version + 1 where id = #{id} and version = #{version}
+    </update>
+
     <insert id="addPurchaseRecord" parameterType="purchaseRecord">
         insert into
         s_purchase_record(user_id, product_id, price, sum, quantity, purchase_time)

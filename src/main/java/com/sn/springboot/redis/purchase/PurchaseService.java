@@ -1,14 +1,17 @@
 package com.sn.springboot.redis.purchase;
 
 import com.sn.springboot.dao.PurchaseDao;
+import com.sn.springboot.pojo.Product;
 import com.sn.springboot.pojo.PurchaseRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.Jedis;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,5 +119,49 @@ public class PurchaseService {
             // 减库存
             purchaseDao.decreaseProductStock(pr.getProductId(), pr.getQuantity());
         }
+    }
+
+    /**
+     * 使用乐观锁
+     *
+     * @param userId
+     * @param productId
+     * @param quantity
+     * @return
+     */
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public boolean purchase(long userId, long productId, int quantity) {
+        // 尝试重入三次
+        for (int i = 0; i < 3; i++) {
+            Product product = purchaseDao.getProductById(productId);
+            // 库存不足
+            if (quantity > product.getStock()) {
+                return false;
+            }
+            // 当前版本号
+            Integer version = product.getVersion();
+            // 减库存
+            int result = purchaseDao.decreaseProductStock2(productId, quantity, version);
+            // 减库存失败
+            if (result == 0) {
+                continue;
+            }
+            // 初始化购买记录
+            PurchaseRecord purchaseRecord = initPurchaseRecord(userId, product, quantity);
+            purchaseDao.addPurchaseRecord(purchaseRecord);
+            return true;
+        }
+        return false;
+    }
+
+    private PurchaseRecord initPurchaseRecord(Long userId, Product product, Integer quantity) {
+        PurchaseRecord purchaseRecord = new PurchaseRecord();
+        purchaseRecord.setUserId(userId);
+        purchaseRecord.setPrice(product.getPrice());
+        purchaseRecord.setQuantity(quantity);
+        purchaseRecord.setSum(product.getPrice() * quantity);
+        purchaseRecord.setPurchaseTime(new Date());
+        purchaseRecord.setProductId(product.getId());
+        return purchaseRecord;
     }
 }

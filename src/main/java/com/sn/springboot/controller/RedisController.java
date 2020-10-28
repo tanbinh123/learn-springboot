@@ -20,6 +20,7 @@ public class RedisController {
         long start = System.currentTimeMillis();
         for (int i = 0; i < 50000; i++) {
             boolean result = purchaseService.purchaseByRedis(i, 1, 1);
+//            boolean result = purchaseService.purchase(i, 1, 1);
             System.out.println(i + ":" + (result ? "购买成功" : "购买失败"));
         }
         long end = System.currentTimeMillis();

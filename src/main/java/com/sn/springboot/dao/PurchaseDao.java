@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 public interface PurchaseDao {
     Product getProductById(Long id);
 
-    int decreaseProductStock(@Param(value = "id") Long id, @Param(value = "quantity") Long quantity);
+    int decreaseProductStock2(@Param(value = "id") Long id, @Param(value = "quantity") Integer quantity, @Param(value = "version") Integer version);
+
+    int decreaseProductStock(@Param(value = "id") Long id, @Param(value = "quantity") Integer quantity);
 
     int addPurchaseRecord(PurchaseRecord purchaseRecord);
 }

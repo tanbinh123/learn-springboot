@@ -84,7 +84,7 @@ public class TaskService {
         String[] records = purchaseRecordStr.split(",");
         Long userId = Long.parseLong(records[0]);
         Double price = Double.parseDouble(records[1]);
-        Long quantity = Long.parseLong(records[2]);
+        Integer quantity = Integer.parseInt(records[2]);
         Double sum = Double.parseDouble(records[3]);
         Date purchaseDate = new Date(Long.parseLong(records[4]));
 
