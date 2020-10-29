@@ -89,7 +89,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-//        web.ignoring().antMatchers("/login");
+        // 使用动态权限配置时，如果自定义登录页面，要配置这个，防止登录页面被拦截
+        web.ignoring().antMatchers("/login");
         // 不拦截静态资源
         web.ignoring().antMatchers("/js/**", "/css/**", "/images/**");
     }
@@ -174,14 +175,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 // 通过签名的请求
                 .authorizeRequests()
-                // 将/sn/blog/**、/sn/user/**（Ant风格的路径配置）路径的访问权限赋予给角色USER、ADMIN
-                // hasAnyRole方法会默认在角色前添加ROLE_
-                .antMatchers("/user/**", "/user/**").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/supporter/**").hasAuthority("ROLE_SUPPORTER")
-                // 是完整登录而不是通过remember me，才可以访问，目的是为了安全需要进行二次校验
-                .antMatchers("/main/hello").fullyAuthenticated()
-                .antMatchers("/verifyCode").permitAll()
+//                // 将/sn/blog/**、/sn/user/**（Ant风格的路径配置）路径的访问权限赋予给角色USER、ADMIN
+//                // hasAnyRole方法会默认在角色前添加ROLE_
+//                .antMatchers("/user/**", "/user/**").hasAnyRole("USER", "ADMIN")
+//                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+//                .antMatchers("/supporter/**").hasAuthority("ROLE_SUPPORTER")
+//                // 是完整登录而不是通过remember me，才可以访问，目的是为了安全需要进行二次校验
+//                .antMatchers("/main/hello").fullyAuthenticated()
+//                .antMatchers("/verifyCode").permitAll()
 
                 // 使用Spring EL配置那些角色可以访问指定路径
                 // 有USER或ADMIN角色的用户才可以访问
@@ -224,7 +225,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // successForwardUrl可以保证登录成功后跳转到其指定的页面路径
                 .formLogin()
                 // /login表示登陆页面接口，同时也表示默认登录的接口也是/login（可以用loginProcessingUrl配置）
+                // 使用动态权限配置时，如果自定义登录页面，一定要配置loginProcessingUrl
                 .loginPage("/login")
+                .loginProcessingUrl("/doLogin")
                 .defaultSuccessUrl("/main/index")
 //                .usernameParameter("name")
 //                .passwordParameter("pwd")

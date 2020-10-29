@@ -35,7 +35,11 @@ public class MyFilterInvocationSecurityMetadataSource implements FilterInvocatio
             if (antPathMatcher.match(menu.getPattern(), requestUrl)) {
                 List<Role> roles = menu.getRoles();
                 // 将角色集合转为角色编码数组
-                String[] roleCodes = roles.stream().map(Role::getRoleCode).toArray(String[]::new);
+//                String[] roleCodes = roles.stream().map(Role::getRoleCode).toArray(String[]::new);
+                String[] roleCodes = new String[roles.size()];
+                for (int i = 0; i < roles.size(); i++) {
+                    roleCodes[i] = roles.get(i).getRoleName();
+                }
                 return SecurityConfig.createList(roleCodes);
             }
         }

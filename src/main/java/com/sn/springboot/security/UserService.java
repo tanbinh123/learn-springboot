@@ -19,7 +19,6 @@ public class UserService implements UserDetailsService {
         if (user == null){
             throw new UsernameNotFoundException("用户名不存在");
         }
-        user.setRoles(userDao.getRolesByUserId(user.getId()));
         return user;
     }
 }

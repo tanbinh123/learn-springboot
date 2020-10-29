@@ -3,6 +3,7 @@ package com.sn.springboot.security;
 import com.sn.springboot.dao.MenuDao;
 import com.sn.springboot.dao.UserDao;
 import com.sn.springboot.pojo.Menu;
+import com.sn.springboot.pojo.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

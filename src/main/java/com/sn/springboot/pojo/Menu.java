@@ -13,6 +13,7 @@ public class Menu implements Serializable {
 
     private String pattern;
 
+    // 当前的路径需要哪些角色才能访问
     private List<Role> roles;
 
     public Long getId() {
