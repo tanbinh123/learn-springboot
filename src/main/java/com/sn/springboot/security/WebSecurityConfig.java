@@ -30,6 +30,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.ServletException;
@@ -163,6 +164,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        return jdbcUserDetailsManager;
 //    }
 
+//    @Bean
+//    TokenBasedRememberMeServices tokenBasedRememberMeServices() {
+//        TokenBasedRememberMeServices services = new TokenBasedRememberMeServices("hello", userService);
+//        services.setTokenValiditySeconds(60 * 30);
+//        return services;
+//    }
+//
+//    @Override
+//    protected UserDetailsService userDetailsService() {
+//        return userService;
+//    }
+
     /**
      * 指定用户、角色与对应URL的访问权限
      *
@@ -210,19 +223,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .anonymous()
 
                 .and()
-//                // 使用记住我的功能，避免每次都输入密码
+                // 使用记住我的功能，避免每次都输入密码
 //                // 有效时间86400秒=1天，保存到cookie中的键是remember-me-key
-//                .rememberMe().tokenValiditySeconds(120).key("remember-me-key")
+                .rememberMe()
+//                .rememberMeParameter("remember-me")
+                .userDetailsService(userService)
+                .tokenValiditySeconds(30*60).key("hello")
                 // 配置token持久化
-//                .tokenRepository(jdbcTokenRepository())
+                .tokenRepository(jdbcTokenRepository())
 //
-//                .and()
                 // 只配置formLogin则使用默认的登录页面，loginPage配置自定义登录页面的接口，
                 // 前后端分离时，loginPage配置的接口可以返回JSON数据来提示客户端需要登录，
                 // defaultSuccessUrl可以配置登录成功的跳转页面，但这里分两种情况：
                 // 1：直接从登录地址登录成功后，会跳转到defaultSuccessUrl配置的页面
                 // 2：访问其它地址被重定向到登录页面，然后登录成功后，不会跳转到defaultSuccessUrl配置的页面，而是登录页面的前一个页面
                 // successForwardUrl可以保证登录成功后跳转到其指定的页面路径
+                .and()
                 .formLogin()
                 // /login表示登陆页面接口，同时也表示默认登录的接口也是/login（可以用loginProcessingUrl配置）
                 // 使用动态权限配置时，如果自定义登录页面，一定要配置loginProcessingUrl
