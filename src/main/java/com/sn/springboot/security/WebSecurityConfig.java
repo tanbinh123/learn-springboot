@@ -164,18 +164,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        return jdbcUserDetailsManager;
 //    }
 
-//    @Bean
-//    TokenBasedRememberMeServices tokenBasedRememberMeServices() {
-//        TokenBasedRememberMeServices services = new TokenBasedRememberMeServices("hello", userService);
-//        services.setTokenValiditySeconds(60 * 30);
-//        return services;
-//    }
-//
-//    @Override
-//    protected UserDetailsService userDetailsService() {
-//        return userService;
-//    }
-
     /**
      * 指定用户、角色与对应URL的访问权限
      *
@@ -222,16 +210,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 注意，由于未配置匿名访问的路径，会和前边的访问限制冲突，基于先配置优先的原则，则会采用前边的配置
 //                .anonymous()
 
-                .and()
-                // 使用记住我的功能，避免每次都输入密码
-//                // 有效时间86400秒=1天，保存到cookie中的键是remember-me-key
-                .rememberMe()
-//                .rememberMeParameter("remember-me")
-                .userDetailsService(userService)
-                .tokenValiditySeconds(30*60).key("hello")
-                // 配置token持久化
-                .tokenRepository(jdbcTokenRepository())
-//
                 // 只配置formLogin则使用默认的登录页面，loginPage配置自定义登录页面的接口，
                 // 前后端分离时，loginPage配置的接口可以返回JSON数据来提示客户端需要登录，
                 // defaultSuccessUrl可以配置登录成功的跳转页面，但这里分两种情况：
@@ -297,6 +275,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 // 配置登出页面及其跳转页面
+                // SecurityContextLogoutHandler
                 .logout()
                 // logoutUrl方法的参数默认就是/logout，默认get请求；可通过logoutRequestMatcher实现post方式
 //                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
@@ -336,6 +315,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                pw.close();
 //            }
 //        })
+
+                .and()
+                // 使用记住我的功能，避免每次都输入密码
+                // TokenBasedRememberMeServices类 会根据配置的信息在登录后生成对应cookie
+                // 之后的请求RememberMeAuthenticationFilter 会解析cookie
+                // 有效时间86400秒=1天，保存到cookie中的键是remember-me
+                .rememberMe()
+//                .rememberMeParameter("my-remember-me")
+//                .userDetailsService(userService)
+                .tokenValiditySeconds(2 * 60).key("hello")
+                // 配置token持久化, PersistentTokenBasedRememberMeServices
+                .tokenRepository(jdbcTokenRepository())
 
                 .and()
                 // 启用浏览器的HTTP基础验证
