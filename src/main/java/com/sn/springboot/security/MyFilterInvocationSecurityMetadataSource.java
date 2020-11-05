@@ -38,7 +38,7 @@ public class MyFilterInvocationSecurityMetadataSource implements FilterInvocatio
 //                String[] roleCodes = roles.stream().map(Role::getRoleCode).toArray(String[]::new);
                 String[] roleCodes = new String[roles.size()];
                 for (int i = 0; i < roles.size(); i++) {
-                    roleCodes[i] = roles.get(i).getRoleName();
+                    roleCodes[i] = roles.get(i).getRoleCode();
                 }
                 return SecurityConfig.createList(roleCodes);
             }

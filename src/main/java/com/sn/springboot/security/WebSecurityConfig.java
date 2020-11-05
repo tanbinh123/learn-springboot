@@ -31,6 +31,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.ServletException;
@@ -194,14 +195,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/login", "/logout_result").permitAll()
 
                 // 动态配置角色的访问权限
-//                .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
-//                    @Override
-//                    public <O extends FilterSecurityInterceptor> O postProcess(O o) {
-//                        o.setAccessDecisionManager(myAccessDecisionManager);
-//                        o.setSecurityMetadataSource(myFilterInvocationSecurityMetadataSource);
-//                        return o;
-//                    }
-//                })
+                .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
+                    @Override
+                    public <O extends FilterSecurityInterceptor> O postProcess(O o) {
+                        o.setAccessDecisionManager(myAccessDecisionManager);
+                        o.setSecurityMetadataSource(myFilterInvocationSecurityMetadataSource);
+                        return o;
+                    }
+                })
                 // 其它任意请求登录后就可以访问
                 .anyRequest().authenticated()
 
@@ -332,12 +333,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 启用浏览器的HTTP基础验证
                 .httpBasic()
                 .and()
-                .csrf().disable();
+                .csrf().disable()
+
+                // 踢掉已登录的用户
+                .sessionManagement()
+                .maximumSessions(1)
+                // 一个浏览器登录成功后，另一个禁止登录，（需要使用踢掉已登录的用户的配置）
+                .maxSessionsPreventsLogin(true)
+        ;
 
 
 //        http.addFilterAt(myUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
     }
+
+    /**
+     * ???配合maxSessionsPreventsLogin
+     * @return
+     */
+    @Bean
+    HttpSessionEventPublisher httpSessionEventPublisher(){
+        return new HttpSessionEventPublisher();
+    }
+
     /**
      * 使用MyUsernamePasswordAuthenticationFilter拦截登录请求后，登录成功失败的处理也需要在这个方法里
      */
