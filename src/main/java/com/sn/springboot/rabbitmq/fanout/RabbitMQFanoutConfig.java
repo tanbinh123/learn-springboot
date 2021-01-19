@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Fanout Exchange 会忽略 RoutingKey 的设置，直接将 Message 路由到所有绑定的 Queue 中。
+ */
 @Configuration
 public class RabbitMQFanoutConfig {
     public static final String FANOUT_NAME = "my_fanout";

@@ -1,15 +1,17 @@
 package com.sn.springboot.rabbitmq.fanout;
 
+import com.sn.springboot.rabbitmq.RabbitMQSendService;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RabbitMQFanoutSendService implements RabbitTemplate.ConfirmCallback {
+public class RabbitMQFanoutSendService implements RabbitTemplate.ConfirmCallback, RabbitMQSendService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Override
     public void sendMessage(String message) {
         // 设置发送消息是否已被消费的回调
         rabbitTemplate.setConfirmCallback(this);

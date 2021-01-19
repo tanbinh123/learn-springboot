@@ -2,8 +2,10 @@ package com.sn.springboot.controller;
 
 import com.sn.springboot.activemq.ActiveMQSendService;
 import com.sn.springboot.pojo.*;
+import com.sn.springboot.rabbitmq.RabbitMQSendService;
 import com.sn.springboot.rabbitmq.direct.RabbitMQDirectSendService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -20,7 +22,8 @@ public class IndexController {
     private ActiveMQSendService activeMqSendService;
 
     @Autowired
-    private RabbitMQDirectSendService rabbitMQSendService;
+    @Qualifier("rabbitMQTopicSendService")
+    private RabbitMQSendService rabbitMQSendService;
 
     @RequestMapping("/index")
     public String index() {
@@ -106,7 +109,6 @@ public class IndexController {
     @ResponseBody
     @GetMapping("/message")
     public String message(String title) {
-//        activeMqSendService.sendMessage(title);
         rabbitMQSendService.sendMessage(title);
         return "message:" + title;
     }
