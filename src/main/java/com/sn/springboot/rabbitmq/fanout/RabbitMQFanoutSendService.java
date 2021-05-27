@@ -23,9 +23,9 @@ public class RabbitMQFanoutSendService implements RabbitTemplate.ConfirmCallback
     @Override
     public void confirm(CorrelationData correlationData, boolean ack, String cause) {
         if (ack) {
-            System.out.println("消息已被消费");
+            System.out.println("消息发送成功");
         } else {
-            System.out.println("消息未被消费：" + cause);
+            System.out.println("消息发送失败：" + cause);
         }
     }
 }
